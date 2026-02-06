@@ -2,7 +2,7 @@
 
 **Coordinated Development Across All Libraries**
 
-**Version:** 1.0  
+**Version:** 1.1  
 **Date:** February 6, 2026  
 **Last Updated:** February 6, 2026
 
@@ -14,9 +14,9 @@
 2026
 Q1          Q2          Q3          Q4
 │           │           │           │
-├─ vyke-analyse v0.4-0.6 ─┤           │
-│   (Structure, Stems,    │           │
-│    Loudness, Chords)    │           │
+├─ vyke-analyse v0.7-0.9 ─┤           │
+│   (Stems, Vocals,       │           │
+│    Advanced Features)   │           │
 │                         │           │
 └──────┬──────────────────┘           │
        │                              │
@@ -39,23 +39,90 @@ Q1          Q2          Q3          Q4
 
 | Library | Version | Status | Next Milestone |
 |---------|---------|--------|----------------|
-| vyke-analyse | v0.3.0 | Active Development | v0.4.0 (Structure) |
+| vyke-analyse | v0.6.0 | Active Development | v0.7.0 (Stem Separation) |
 | vyke-produce | - | Planning Complete | v0.1.0 (Core) |
 | vyke-play | - | Planning Complete | v0.1.0 (Foundation) |
 
 ---
 
-## Q1 2026: Analysis Foundation
+## What's Been Completed (vyke-analyse)
 
-### February: Structure & Phrases (vyke-analyse v0.4.0)
+### Phase 1: Core Foundation ✅
+- Audio I/O with GPU acceleration
+- STFT, Mel spectrograms, filterbanks
+- Core types and utilities
 
-**Week 1-2: Vocal Detection**
+### Phase 2: Beat & Tempo Analysis ✅
+- TCN + DBN beat tracking (98% BPM accuracy)
+- Downbeat detection
+- Tempo estimation with octave disambiguation
+
+### Phase 3: Key Detection ✅
+- CNN-based key detection (86% accuracy)
+- Camelot notation support
+- Compatible keys for harmonic mixing
+
+### Phase 3A: Track Structure ✅
+- Self-similarity matrix analysis
+- Boundary detection with novelty curves
+- Section classification (intro/verse/chorus/drop/outro)
+- Phrase detection (8/16 bar markers)
+- Mix points detection (basic)
+
+### Phase 3B: Energy & Loudness ✅
+- EBU R128 loudness (LUFS, LRA, true peak)
+- Energy curves and spectral analysis
+- Waveform data for UI display
+- Danceability scoring
+
+### Phase 3C: Chords & Genre ✅
+- Chord detection with extended vocabulary
+- Genre classification (DJ-focused taxonomy)
+- Style analysis
+
+### Phase 3D: Rekordbox Integration ✅
+- Rekordbox XML export for cue points
+- Beat grid export
+- Collection export
+
+### Phase 4: DJ Set Analysis ✅
+- Content type detection (track vs DJ set vs podcast)
+- Track boundary detection (multi-feature fusion)
+- Transition analysis (type classification, quality scoring)
+
+---
+
+## Q1 2026: Remaining Analysis Work
+
+### February: Stem Separation (vyke-analyse v0.7.0) ⏳ IN PROGRESS
+
+**Demucs Integration:**
+- [ ] Wrap Demucs htdemucs/htdemucs_ft models
+- [ ] GPU/MPS/CPU device selection
+- [ ] Memory-efficient chunked processing
+- [ ] 4-stem output (drums, bass, vocals, other)
+
+**HPSS (Lightweight Alternative):**
+- [ ] Median-filter harmonic/percussive separation
+- [ ] Wiener mask computation
+- [ ] Residual extraction
+
+**UVR/MDX-Net (Best Quality):**
+- [ ] MDX23C integration for superior vocals
+- [ ] Two-pass mode (MDX vocals + Demucs instruments)
+- [ ] Model auto-download and caching
+
+**Deliverable:** `vyke.separate()` with multiple engine options
+
+### March: Vocal & Intro Detection (vyke-analyse v0.8.0)
+
+**Vocal Detection:**
 - [ ] Vocal activity detection per frame
 - [ ] Vocal segment extraction (start/end times)
 - [ ] Lead vs background vocal classification
 - [ ] Vocal energy curve
 
-**Week 3-4: Intro/Outro Detection**
+**Intro/Outro Detection:**
 - [ ] DJ-friendly intro detection (drums only, stable)
 - [ ] Radio edit intro detection (immediate vocals)
 - [ ] Outro type classification
@@ -63,27 +130,27 @@ Q1          Q2          Q3          Q4
 
 **Deliverable:** `vyke.detect_vocals()` and intro/outro classification
 
-### March: Loudness & Energy (vyke-analyse v0.5.0)
+---
 
-**Week 1-2: EBU R128 Loudness**
-- [ ] Integrated LUFS measurement
-- [ ] Loudness Range (LRA)
-- [ ] True peak detection
-- [ ] Momentary/short-term loudness curves
+### April: Advanced Features (vyke-analyse v0.9.0)
 
-**Week 3-4: Energy Analysis**
-- [ ] RMS energy curves
-- [ ] Spectral energy bands (bass/mid/high)
-- [ ] Danceability scoring
-- [ ] Energy profile classification
+**Pitch & Melody:**
+- [ ] CREPE-style pitch tracking
+- [ ] Melody extraction
+- [ ] Note onset/offset detection
 
-**Deliverable:** Professional loudness metering and energy analysis
+**Per-Stem Analysis:**
+- [ ] Drum pattern classification from stems
+- [ ] Bass line analysis from stems
+- [ ] Vocal characteristics from stems
+
+**Deliverable:** Complete analysis suite ready for v1.0
 
 ---
 
 ## Q2 2026: Production Foundation
 
-### April: vyke-produce Core (v0.1.0-0.3.0)
+### April-May: vyke-produce Core (v0.1.0-0.3.0)
 
 **Week 1-2: Project Setup**
 - [ ] Repository structure
@@ -105,7 +172,7 @@ Q1          Q2          Q3          Q4
 
 **Deliverable:** Can generate basic Ableton projects
 
-### May: Genres & Templates (vyke-produce v0.4.0-0.6.0)
+### May-June: Genres & Templates (vyke-produce v0.4.0-0.6.0)
 
 **Week 1-3: Circuit House**
 - [ ] Circuit House template
@@ -123,7 +190,7 @@ Q1          Q2          Q3          Q4
 
 **Deliverable:** 2 complete genre templates
 
-### June: vyke-play Foundation (v0.1.0-0.3.0)
+### June-July: vyke-play Foundation (v0.1.0-0.3.0)
 
 **Week 1-2: Pro DJ Link**
 - [ ] Protocol implementation
@@ -143,7 +210,7 @@ Q1          Q2          Q3          Q4
 
 ## Q3 2026: Integration & Polish
 
-### July: More Genres (vyke-produce v0.7.0-0.9.0)
+### July-August: More Genres (vyke-produce v0.7.0-0.9.0)
 
 **New Genres:**
 - [ ] Afro House
@@ -154,12 +221,12 @@ Q1          Q2          Q3          Q4
 
 **Deliverable:** 7+ genre templates
 
-### August: Remix Workflows (Cross-Library)
+### August-September: Remix Workflows (Cross-Library)
 
-**vyke-analyse v0.6.0:**
-- [ ] Chord detection
-- [ ] Genre classification
-- [ ] Stem separation (Demucs)
+**vyke-analyse v1.0.0:**
+- [ ] Stable API freeze
+- [ ] Performance optimization
+- [ ] Documentation complete
 
 **vyke-produce v0.9.0:**
 - [ ] InspirationSet protocol
@@ -174,7 +241,7 @@ Q1          Q2          Q3          Q4
 
 **Deliverable:** Complete remix workflow (analyse → produce)
 
-### September: Live Intelligence (vyke-play v0.5.0-0.7.0)
+### September-October: Live Intelligence (vyke-play v0.5.0-0.7.0)
 
 **Week 1-2: Track Recommendations**
 - [ ] Harmonic mixing (Camelot)
@@ -240,11 +307,12 @@ Q1          Q2          Q3          Q4
 ## Dependency Graph
 
 ```
-vyke-analyse v0.4.0 ──┐
+vyke-analyse v0.6.0 ──┐ (DONE: structure, energy, chords, genre, DJ sets)
                       │
-vyke-analyse v0.5.0 ──┼──► vyke-produce v0.1.0
-                      │         (can start after 0.5)
-vyke-analyse v0.6.0 ──┘
+vyke-analyse v0.7.0 ──┼──► vyke-produce v0.1.0
+   (stems)            │         (can start after 0.7)
+                      │
+vyke-analyse v0.8.0 ──┘ (vocals, intro/outro)
                             │
                             ▼
                       vyke-produce v1.0
@@ -255,8 +323,8 @@ vyke-analyse v0.6.0 ──┘
 ```
 
 **Key Dependencies:**
-- vyke-produce can start development after vyke-analyse v0.5.0
-- vyke-play requires vyke-analyse v0.6.0+ for track library
+- vyke-produce can start development after vyke-analyse v0.7.0 (stems ready)
+- vyke-play requires vyke-analyse v0.8.0+ for track library with full metadata
 - vyke-play optionally uses vyke-produce for live generation
 
 ---
@@ -265,37 +333,40 @@ vyke-analyse v0.6.0 ──┘
 
 ### vyke-analyse
 
-| Version | Date | Features | DJLab Integration |
-|---------|------|----------|-------------------|
-| v0.4.0 | Feb 28 | Vocal detection, intro/outro types | 2.0.x |
-| v0.5.0 | Mar 31 | LUFS, energy curves | 2.0.x |
-| v0.6.0 | Apr 30 | Chords, genre classification | 2.1.x |
-| v0.7.0 | May 31 | Stem separation (Demucs) | 2.1.x |
-| v0.8.0 | Jun 30 | DJ set analysis | 2.2.x |
-| v0.9.0 | Aug 31 | Advanced features | 3.0.x |
-| v1.0.0 | Oct 31 | Stable API | 3.0.x |
+| Version | Date | Features | Status |
+|---------|------|----------|--------|
+| v0.1.0 | Jan 15 | Audio I/O, GPU spectrograms | ✅ Done |
+| v0.2.0 | Jan 25 | Beat/tempo tracking (98% accuracy) | ✅ Done |
+| v0.3.0 | Feb 1 | Key detection (86% accuracy) | ✅ Done |
+| v0.4.0 | Feb 3 | Track structure, phrases, mix points | ✅ Done |
+| v0.5.0 | Feb 4 | Energy, loudness, waveform | ✅ Done |
+| v0.6.0 | Feb 5 | Chords, genre, Rekordbox export, DJ sets | ✅ Done |
+| **v0.7.0** | **Feb 10** | **Stem separation (Demucs, HPSS, UVR)** | **⏳ In Progress** |
+| v0.8.0 | Feb 20 | Vocal detection, intro/outro types | Planned |
+| v0.9.0 | Mar 15 | Pitch tracking, per-stem analysis | Planned |
+| v1.0.0 | Mar 31 | Stable API, optimization | Planned |
 
 ### vyke-produce
 
-| Version | Date | Features | DJLab Integration |
-|---------|------|----------|-------------------|
-| v0.1.0 | Apr 15 | Core architecture, plugin scanner | 2.1.x |
-| v0.3.0 | Apr 30 | Ableton export working | 2.1.x |
-| v0.5.0 | May 31 | Circuit House template | 2.2.x |
-| v0.7.0 | Jul 15 | 5+ genres | 3.0.x |
-| v0.9.0 | Aug 31 | Remix workflows | 3.0.x |
-| v1.0.0 | Oct 31 | Production release | 3.0.x |
+| Version | Date | Features | Status |
+|---------|------|----------|--------|
+| v0.1.0 | Apr 15 | Core architecture, plugin scanner | Planned |
+| v0.3.0 | May 15 | Ableton export working | Planned |
+| v0.5.0 | Jun 15 | Circuit House template | Planned |
+| v0.7.0 | Jul 31 | 5+ genres | Planned |
+| v0.9.0 | Sep 15 | Remix workflows | Planned |
+| v1.0.0 | Oct 31 | Production release | Planned |
 
 ### vyke-play
 
-| Version | Date | Features | DJLab Integration |
-|---------|------|----------|-------------------|
-| v0.1.0 | Jun 30 | Pro DJ Link, status reading | 3.0.x |
-| v0.3.0 | Jul 31 | Hardware control | 3.0.x |
-| v0.5.0 | Aug 31 | Track recommendations | 3.0.x |
-| v0.7.0 | Sep 30 | Mix assistance | 3.1.x |
-| v0.9.0 | Nov 15 | Auto-DJ modes | 3.1.x |
-| v1.0.0 | Nov 30 | Full release | 3.1.x |
+| Version | Date | Features | Status |
+|---------|------|----------|--------|
+| v0.1.0 | Jun 30 | Pro DJ Link, status reading | Planned |
+| v0.3.0 | Aug 15 | Hardware control | Planned |
+| v0.5.0 | Sep 15 | Track recommendations | Planned |
+| v0.7.0 | Oct 15 | Mix assistance | Planned |
+| v0.9.0 | Nov 15 | Auto-DJ modes | Planned |
+| v1.0.0 | Nov 30 | Full release | Planned |
 
 ---
 
@@ -318,13 +389,15 @@ vyke-analyse v0.6.0 ──┘
 - DJLab provides Live API connection
 - DJLab orchestrates cross-library workflows
 
-### Rekordbox Export
-**Timeline:** Q2 2026
-**Libraries:** analyse, play
+### Rekordbox Export ✅ DONE
+**Timeline:** February 2026
+**Libraries:** analyse
 
-- vyke-analyse exports cue points to Rekordbox XML
-- vyke-play reads/writes Rekordbox databases
-- USB export with AI-curated playlists
+- ✅ vyke-analyse exports cue points to Rekordbox XML
+- ✅ Beat grid export
+- ✅ Collection export
+- vyke-play will read/write Rekordbox databases (future)
+- USB export with AI-curated playlists (future)
 
 ---
 
@@ -332,13 +405,13 @@ vyke-analyse v0.6.0 ──┘
 
 ### Contingency Plans
 
-**If vyke-analyse v0.4.0 slips:**
-- Delay vyke-produce start by 2 weeks
-- Focus on core functionality first
-
 **If stem separation is delayed:**
-- Ship vyke-analyse v0.6.0 without stems
-- Add stems in v0.7.0
+- Ship vyke-analyse v0.7.0 with Demucs only
+- Add UVR/MDX-Net in v0.7.1
+
+**If vocal detection is delayed:**
+- Use stem-based vocal detection from separation
+- Delay intro/outro classification
 
 **If Pioneer integration is blocked:**
 - Focus on USB export mode
@@ -347,7 +420,7 @@ vyke-analyse v0.6.0 ──┘
 ### Scope Reduction Options
 
 **Minimum Viable Ecosystem (if needed):**
-- vyke-analyse: BPM, key, basic structure only
+- vyke-analyse: BPM, key, structure, stems (Demucs only)
 - vyke-produce: 3 genres (Circuit, Afro Circuit, Techno)
 - vyke-play: Assistant mode only, no hardware control
 
@@ -374,4 +447,4 @@ vyke-analyse v0.6.0 ──┘
 
 ---
 
-**Next Milestone:** February 28, 2026 - vyke-analyse v0.4.0 (Structure + Vocal Detection)
+**Next Milestone:** February 10, 2026 - vyke-analyse v0.7.0 (Stem Separation with Demucs, HPSS, UVR/MDX-Net)

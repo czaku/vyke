@@ -1,503 +1,479 @@
-# Vyke Produce V3: Conversational AI Producer Design
+# Vyke Produce V3: DJLab Integration Design
 
-**Conversational, Multi-Turn, Autonomous Music Production**
+**DJLab is the Orchestrator, vyke-produce is the Executor**
 
-**Version:** 1.0  
+**Version:** 1.1 (Corrected)  
 **Date:** February 6, 2026  
 **Status:** Design Phase
 
 ---
 
-## Executive Summary
+## System Architecture (Corrected)
 
-V3 transforms vyke-produce from a **one-shot generator** into a **conversational AI Producer** that works collaboratively with the user (Director → Producer relationship).
+### Responsibility Separation
 
-**Key Innovation:** The system spins off specialized "Chef" agents for different production tasks (mixing, mastering, sound design), orchestrated by a Maestro that manages the conversation and workflow.
+| Component | Role | Has LLM? | Responsibility |
+|-----------|------|----------|----------------|
+| **DJLab** | Orchestrator | ✅ Yes | Chat UI, conversation flow, Maestro, plugin mgmt |
+| **vyke-produce** | Executor | ❌ No | Generate Ableton projects from complete specs |
+| **vyke-analyse** | Analyzer | ❌ No | Analyze audio, return structured data |
+
+### Correct Flow
+
+```
+USER → DJLab Chat UI
+           ↓
+    [DJLab Maestro - LLM]
+    "I want to remix Madonna"
+           ↓
+    Ask clarifying questions
+    "Key? BPM? Genre?"
+           ↓
+    Call vyke-analyse (if needed)
+    Get analysis results
+           ↓
+    Build complete InspirationSet
+           ↓
+    Call vyke-produce.remix(InspirationSet)
+           ↓
+    Receive .als file path
+           ↓
+    Show to user
+           ↓
+    User: "Bass too loud"
+           ↓
+    [DJLab Maestro]
+    Update parameters
+           ↓
+    Call vyke-produce.update_project(params)
+           ↓
+    Return updated .als
+```
+
+**Key Point:** vyke-produce NEVER talks to the user. It receives complete specifications and returns files.
 
 ---
 
-## How LLMs Are Used in V3
+## vyke-produce V3 Interface
 
-### 1. Intent Understanding & Planning (Claude/GPT)
-
-**Purpose:** Understand what the user wants and create production plans
+### What vyke-produce Does
 
 ```python
-# User input
-user_input = "Remix Madonna to Afro Circuit"
-
-# LLM analyzes intent
-intent_analysis = await llm.analyze_intent(user_input)
-# Returns:
-# {
-#   "workflow": "remix",
-#   "source_type": "audio_file",
-#   "source_description": "Madonna - Like a Prayer",
-#   "target_genre": "afro_circuit",
-#   "missing_parameters": ["key", "bpm", "vocal_treatment"],
-#   "suggested_parameters": {
-#     "key": "Fm (dark tribal energy)",
-#     "bpm": "128 (peak time)"
-#   }
-# }
-```
-
-### 2. Clarifying Questions (Interactive)
-
-**Purpose:** Ask smart questions when parameters are missing
-
-```python
-# Maestro determines what's needed
-if intent.missing_parameters:
-    question = await llm.generate_question(
-        context=intent,
-        missing=intent.missing_parameters[0]
-    )
-    # "I suggest Fm at 128 BPM for dark tribal energy. Agree?"
+class Producer:
+    """
+    Music production executor.
     
-    user_answer = await ask_user(question)
-    intent.update(user_answer)
-```
-
-### 3. Workflow Orchestration (State Management)
-
-**Purpose:** Decide what to do next based on current state
-
-```python
-# During production, LLM decides next step
-state = {
-    "stems_separated": True,
-    "vocals_analyzed": True,
-    "vocal_pitch_shifted": False,
-    "drums_generated": True,
-    "current_issue": "vocals sound thin after pitch shift"
-}
-
-next_action = await llm.decide_next_step(state)
-# Returns: {
-#   "action": "consult_chef",
-#   "chef_type": "mixing",
-#   "task": "Add vocal thickening chain"
-# }
-```
-
-### 4. Chef Specialization (Domain Experts)
-
-**Purpose:** Each production domain has a specialized LLM prompt/persona
-
-```python
-# Mixing Chef - specialized for mixing decisions
-mixing_chef = MixingChef(llm_backend)
-recommendation = await mixing_chef.consult(
-    track_analysis=analysis,
-    issue="drop lacks impact"
-)
-# Returns detailed mixing recommendations
-```
-
-### 5. Explanation Generation
-
-**Purpose:** Explain decisions to the user
-
-```python
-# After changes, explain what was done
-explanation = await llm.explain_changes(
-    changes=mixed_result.changes,
-    user_level="intermediate"
-)
-# "I lowered the bass by 3dB and increased sidechain ducking to -6dB 
-#  to create that classic Circuit House pump."
-```
-
----
-
-## The Conversational Production Workflow
-
-### Example: Audio-to-Remix (Full Flow)
-
-```
-USER: "Remix Madonna to Afro Circuit"
-
-V3-MAESTRO: Analyzing intent...
-          → Detected: remix workflow
-          → Target genre: afro_circuit
-          → Missing: key, bpm, vocal treatment
-
-V3-MAESTRO: "I suggest Fm at 128 BPM for dark tribal energy. Agree?"
-
-USER: "Yes, but make it 126 BPM"
-
-V3-MAESTRO: ✓ Key: Fm, BPM: 126
-          → Spinning off StemSeparationAgent...
-
-[BACKGROUND: StemSeparationAgent runs Demucs]
-          → vocals.wav, drums.wav, bass.wav, other.wav
-
-V3-MAESTRO: "Original vocals are in C major. I'll pitch-shift to Fm 
-          with formant preservation. Keep the lyrics or make chops?"
-
-USER: "Keep lyrics but add some stutter effect in the build"
-
-V3-MAESTRO: ✓ Vocal treatment: pitch_shift + formant_preserve + stutter_build
-          → Consulting VocalChef...
-
-[VocalChef analyzes and recommends processing chain]
-
-V3-MAESTRO: → Spinning off DrumGenerationAgent...
-
-[DrumGenerationAgent creates LAPDR patterns]
-
-V3-MAESTRO: → Consulting AfroCircuitChef for percussion...
-
-[AfroCircuitChef selects tribal samples from Sound Vault]
-
-V3-MAESTRO: → Spinning off ArrangementAgent...
-
-[ArrangementAgent builds 16/8/32/16/32/32 structure]
-
-V3-MAESTRO: → Consulting MixingChef...
-
-[MixingChef designs sidechain and EQ]
-
-V3-MAESTRO: → Consulting MasteringChef...
-
-[MasteringChef sets LUFS targets]
-
-V3-MAESTRO: → Spinning off ExportAgent...
-
-[ExportAgent generates Ableton project]
-
-V3-MAESTRO: ✅ Done! Created Afro_Circuit_Remix.als
-          "I used heavy sidechain (-6dB ducking) and added 
-           tribal percussion (telecoteco pattern). 
-           Check the breakdown at 1:30 - vocal stutter on 1/16 grid."
-
-USER: "Bass too loud, needs more sidechain"
-
-V3-MAESTRO: → Consulting MixingChef...
-          → Updating project parameters...
-          ✅ Bass lowered 3dB, sidechain threshold -20dB → -15dB
-          
-V3-MAESTRO: "Better? The bass now ducks -8dB on kick hits."
-
-USER: "Perfect! Add filter sweep on build (bars 33-48)"
-
-V3-MAESTRO: → Consulting SoundDesignChef...
-          → Adding Autofilter with automation...
-          ✅ Filter sweep: 200Hz → 20kHz over 16 bars
-          
-V3-MAESTRO: "Filter sweep added. Want me to add a riser sample too?"
-```
-
----
-
-## Agent System Architecture (Wickit-Inspired)
-
-### Core Concept: The Music Bakery
-
-Based on **wickit**'s "Ancient Magic" pattern (from ralfiepretzel):
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    V3 Music Bakery                          │
-├─────────────────────────────────────────────────────────────┤
-│                                                              │
-│  🎵 MAESTRO (The Conductor)                                │
-│     • Orchestrates the entire production                    │
-│     • Manages conversation state                            │
-│     • Decides when to spin off agents                       │
-│     • Handles user Q&A                                      │
-│     • Maintains production context                          │
-│                                                              │
-│  ┌─────────────┬─────────────┬─────────────┐               │
-│  │ 🧙 VOCAL    │ 🧙 DRUM     │ 🧙 BASS     │               │
-│  │   CHEF      │   CHEF      │   CHEF      │               │
-│  │             │             │             │               │
-│  │ • Pitch     │ • Patterns  │ • Sound     │               │
-│  │ • Time      │ • Layering  │   design    │               │
-│  │   stretch   │ • Humanize  │ • Groove    │               │
-│  │ • Formant   │             │             │               │
-│  └─────────────┴─────────────┴─────────────┘               │
-│  ┌─────────────┬─────────────┬─────────────┐               │
-│  │ 🧙 MIXING   │ 🧙 MASTER   │ 🧙 ARRANGE  │               │
-│  │   CHEF      │   CHEF      │   CHEF      │               │
-│  │             │             │             │               │
-│  │ • Levels    │ • LUFS      │ • Structure │               │
-│  │ • EQ        │ • Limiting  │ • Energy    │               │
-│  │ • Comp      │ • Width     │ • Transitions│              │
-│  │ • FX chains │             │             │               │
-│  └─────────────┴─────────────┴─────────────┘               │
-│  ┌─────────────┬─────────────┬─────────────┐               │
-│  │ 🧙 SOUND    │ 🧙 GENRE    │ 🧙 PLUGIN   │               │
-│  │   DESIGN    │   CHEF      │   CHEF      │               │
-│  │   CHEF      │             │             │               │
-│  │             │ • Style     │ • Selection │               │
-│  │ • Synth     │ • Patterns  │ • Chains    │               │
-│  │   patches   │ • Rules     │ • Fallbacks │               │
-│  │ • Macros    │             │             │               │
-│  └─────────────┴─────────────┴─────────────┘               │
-│                                                              │
-│  🤖 AGENTS (Workers)                                        │
-│  ┌─────────────┬─────────────┬─────────────┐               │
-│  │ • StemSep   │ • Generate  │ • Export    │               │
-│  │ • Analyze   │ • Mix       │ • Render    │               │
-│  │ • Process   │ • Master    │ • Validate  │               │
-│  └─────────────┴─────────────┴─────────────┘               │
-│                                                              │
-└─────────────────────────────────────────────────────────────┘
-```
-
-### Agent Types
-
-#### 1. Maestro Agent (Always Active)
-
-**Role:** Central orchestrator, conversation manager
-
-**Responsibilities:**
-- Parse user intent
-- Maintain conversation state
-- Decide when to spin off specialist agents
-- Route Chef consultations
-- Present results to user
-- Handle iteration requests
-
-**State Machine:**
-```python
-class MaestroState(Enum):
-    IDLE = "idle"
-    GATHERING_PARAMS = "gathering_params"  # Asking questions
-    PLANNING = "planning"                   # Creating production plan
-    EXECUTING = "executing"                 # Running agents
-    CONSULTING = "consulting"               # Talking to Chefs
-    REVIEWING = "reviewing"                 # Presenting results
-    ITERATING = "iterating"                 # Making changes
-    COMPLETE = "complete"
-```
-
-#### 2. Chef Agents (On-Demand Specialists)
-
-**Role:** Domain experts consulted for specific decisions
-
-**Examples:**
-- `MixingChef`: Recommends EQ, compression, levels
-- `MasteringChef`: Recommends LUFS, limiting, width
-- `VocalChef`: Recommends pitch/time processing
-- `AfroCircuitChef`: Genre-specific knowledge
-- `SerumChef`: Sound design for Serum
-
-**Invocation Pattern:**
-```python
-# Maestro decides to consult a Chef
-if issue.domain == "mixing":
-    chef = MixingChef(
-        llm_backend=claude,
-        knowledge_base=mixing_knowledge,
-        plugin_inventory=available_plugins
-    )
-    recommendation = await chef.consult(
-        track_analysis=analysis,
-        issue=issue.description,
-        constraints=user_constraints
-    )
-```
-
-#### 3. Worker Agents (Task Executors)
-
-**Role:** Execute specific production tasks
-
-**Examples:**
-- `StemSeparationAgent`: Runs Demucs
-- `PatternGenerationAgent`: Creates MIDI patterns
-- `MixingAgent`: Applies mixing parameters
-- `ExportAgent`: Generates Ableton project
-
-**Lifecycle:**
-```python
-# Spin off agent
-agent = StemSeparationAgent(
-    input_file="madonna.mp3",
-    output_dir="/tmp/stems"
-)
-
-# Run asynchronously
-result = await agent.run()
-
-# Agent terminates when done
-```
-
----
-
-## Do We Build Our Own System or Use Wickit?
-
-### Option A: Use wickit (Existing Framework)
-
-**Pros:**
-- ✅ Proven in ralfiepretzel (production code)
-- ✅ 65% code reuse across projects
-- ✅ 7 weeks vs 10 weeks (faster)
-- ✅ Battle-tested agent patterns
-- ✅ Built-in security (guardian module)
-- ✅ Same team maintains it
-
-**Cons:**
-- ❌ Dependency on external library
-- ❌ May need customization for music domain
-- ❌ Less control over internals
-
-**How It Works:**
-```python
-from wickit.maestro import Maestro
-from wickit.wizards import Wizard
-
-# Maestro orchestrates
-maestro = Maestro()
-
-# Define Chefs as Wizards
-class MixingChef(Wizard):
-    domain = "mixing"
+    NO LLM. NO conversation. NO orchestration.
+    Just receives specs, generates Ableton projects.
+    """
     
-    async def consult(self, context):
-        # Use LLM to generate recommendations
-        return await self.llm.generate(
-            prompt=mixing_prompt,
-            context=context
+    def __init__(
+        self,
+        plugin_inventory: PluginInventory,      # From DJLab
+        sound_vault_session: Session,           # From DJLab
+        live_api: Optional[LiveAPI] = None,    # From DJLab
+    ):
+        self.plugins = plugin_inventory
+        self.vault = SoundVaultAccess(sound_vault_session)
+        self.live = live_api
+    
+    # ============================================================
+    # V2: Direct Generation (one-shot)
+    # ============================================================
+    
+    def generate_track(self, spec: TrackSpec) -> ProductionResult:
+        """
+        Generate track from complete specification.
+        
+        Called by DJLab after Maestro has gathered all parameters.
+        """
+        pass
+    
+    # ============================================================
+    # V3: Remix from Complete InspirationSet
+    # ============================================================
+    
+    def remix(self, inspiration_set: InspirationSet) -> ProductionResult:
+        """
+        Create remix from complete InspirationSet.
+        
+        Args:
+            inspiration_set: Complete spec including:
+                - main_track_path
+                - stems (from vyke-analyse, called by DJLab)
+                - beat_source, drop_source (optional)
+                - target_genre, target_bpm, target_key
+                - version_type
+                - voice_drops
+        
+        Returns:
+            ProductionResult with .als path or LiveResult
+        """
+        pass
+    
+    def reproduce_vibe(self, reference: ReferenceTrack) -> ProductionResult:
+        """
+        Reproduce track vibe without sampling.
+        """
+        pass
+    
+    def extract_motive(
+        self,
+        audio_path: str,
+        time_range: TimeRange
+    ) -> MotiveResult:
+        """
+        Extract motive (bassline/melody) → MIDI + preset.
+        """
+        pass
+    
+    # ============================================================
+    # V3: Update Existing Project (for iteration)
+    # ============================================================
+    
+    def update_project(
+        self,
+        project_path: str,
+        changes: List[ParameterChange]
+    ) -> ProductionResult:
+        """
+        Update existing Ableton project parameters.
+        
+        Called by DJLab when user says "make bass louder".
+        
+        Args:
+            project_path: Path to existing .als file
+            changes: List of parameter changes
+                e.g., ["bass_track.volume", "-12dB", "-9dB"]
+        
+        Returns:
+            Updated ProductionResult
+        """
+        pass
+```
+
+### Data Structures (Input from DJLab)
+
+```python
+@dataclass
+class InspirationSet:
+    """
+    Complete specification for remix/production.
+    
+    Built by DJLab Maestro through conversation with user.
+    vyke-produce just executes - no questions asked.
+    """
+    
+    # Main track (provided by DJLab)
+    main_track_path: str
+    
+    # Stems (vyke-analyse called by DJLab already)
+    vocal_stem_path: Optional[str] = None
+    drum_stem_path: Optional[str] = None
+    bass_stem_path: Optional[str] = None
+    other_stem_path: Optional[str] = None
+    
+    # Inspiration sources (optional, from other tracks)
+    beat_source: Optional[InspirationSource] = None
+    drop_source: Optional[InspirationSource] = None
+    bass_source: Optional[InspirationSource] = None
+    
+    # Target specs (determined by DJLab Maestro)
+    target_genre: str = "house"           # "afro_circuit", "circuit_house"
+    target_bpm: float = 128.0             # Determined by conversation
+    target_key: str = "Am"                # Determined by conversation
+    target_energy: str = "peak"           # "warmup", "peak", "afterhours"
+    
+    # Version type (chosen by user via DJLab UI)
+    version_type: VersionType = VersionType.EXTENDED
+    
+    # Vocal treatment (determined by conversation)
+    vocal_treatment: VocalTreatment = VocalTreatment.KEEP_LYRICS
+    vocal_processing: List[str] = field(default_factory=list)
+    # e.g., ["pitch_shift", "formant_preserve", "stutter_build"]
+    
+    # Voice drops (selected by user in DJLab)
+    voice_drops: List[VoiceDrop] = field(default_factory=list)
+    
+    # Mixing preferences (can be overridden by user in DJLab)
+    mixing_style: str = "circuit"         # Genre-specific mixing
+    sidechain_amount: float = -6.0        # dB
+    
+    # Plugin preferences (from DJLab plugin discovery)
+    preferred_bass_synth: Optional[str] = None  # "Serum 2", "Diva"
+    preferred_drums: Optional[str] = None       # "Nexus 5", custom
+
+
+@dataclass
+class ParameterChange:
+    """
+    Single parameter change for update_project().
+    
+    Generated by DJLab Maestro from user request:
+    User: "Bass too loud" → Maestro parses → ParameterChange
+    """
+    target: str           # "bass_track.volume"
+    old_value: Any        # -12.0
+    new_value: Any        # -15.0
+    reason: str           # "User requested lower bass"
+
+
+@dataclass
+class ProductionResult:
+    """
+    Result from vyke-produce execution.
+    
+    Returned to DJLab for display to user.
+    """
+    success: bool
+    
+    # Output
+    als_path: Optional[str] = None
+    live_result: Optional[LiveResult] = None  # If using Live API
+    
+    # Metadata
+    project_name: str = ""
+    duration_seconds: float = 0.0
+    
+    # What was used (for DJLab to show user)
+    plugins_used: List[str] = field(default_factory=list)
+    samples_used: List[str] = field(default_factory=list)
+    midi_clips_generated: int = 0
+    
+    # For iteration tracking
+    generation_time_seconds: float = 0.0
+    changes_made: List[ParameterChange] = field(default_factory=list)
+```
+
+---
+
+## DJLab Maestro → vyke-produce Flow
+
+### Example: Complete Remix Workflow
+
+**Step 1-5: DJLab Maestro (LLM) does conversation**
+
+```python
+# Inside DJLab (not vyke-produce)
+
+class DJLabMaestro:
+    """LLM-powered orchestrator in DJLab."""
+    
+    async def handle_remix_request(self, user_input: str):
+        # 1. Parse intent
+        intent = await self.llm.parse_intent(user_input)
+        # intent: {"workflow": "remix", "source": "madonna.mp3", "target_genre": "afro_circuit"}
+        
+        # 2. Check missing parameters
+        missing = self.get_missing_params(intent)
+        
+        # 3. Ask clarifying questions
+        for param in missing:
+            question = await self.llm.generate_question(param)
+            answer = await self.ask_user(question)
+            intent[param] = answer
+        
+        # 4. Call vyke-analyse if needed
+        if intent.needs_analysis:
+            analysis = await self.vyke_analyze(intent.source_file)
+            intent.analysis = analysis
+        
+        # 5. Build complete InspirationSet
+        inspiration_set = InspirationSet(
+            main_track_path=intent.source_file,
+            target_genre=intent.target_genre,
+            target_bpm=intent.bpm,
+            target_key=intent.key,
+            vocal_treatment=intent.vocal_treatment,
+            # ... etc
         )
-
-# Worker agents as Skills
-from wickit.tricks import Skill
-
-class StemSeparationSkill(Skill):
-    async def execute(self, input_file):
-        return await separate_stems(input_file)
+        
+        # 6. Call vyke-produce (THIS IS THE LIBRARY CALL)
+        result = await self.producer.remix(inspiration_set)
+        
+        # 7. Show result to user
+        await self.show_user(result)
+        
+        # 8. Handle iteration
+        while True:
+            feedback = await self.get_user_feedback()
+            if feedback == "done":
+                break
+            
+            # Parse feedback into changes
+            changes = await self.llm.parse_feedback(feedback)
+            
+            # Call vyke-produce.update_project()
+            result = await self.producer.update_project(
+                result.als_path,
+                changes
+            )
+            
+            await self.show_user(result)
 ```
 
-### Option B: Build Custom (LangGraph)
+**User Experience in DJLab:**
 
-**Pros:**
-- ✅ Full control over architecture
-- ✅ Purpose-built for music production
-- ✅ No external dependencies
-- ✅ Can optimize for real-time/audio
+```
+User: "Remix Madonna to Afro Circuit"
 
-**Cons:**
-- ❌ 10 weeks vs 7 weeks (slower)
-- ❌ Must solve problems wickit already solved
-- ❌ More maintenance burden
-- ❌ Reinventing the wheel
+DJLab: "I suggest Fm at 128 BPM for dark tribal energy. Agree?"
+User: "Yes, but make it 126"
 
-**How It Works:**
+DJLab: "Keep the original lyrics or make vocal chops?"
+User: "Keep lyrics, add stutter in build"
+
+DJLab: [Shows loading spinner]
+      "Separating stems..."
+      "Generating drums..."
+      "Mixing..."
+      
+DJLab: ✅ "Done! Created Afro_Circuit_Remix.als
+      Bass: Serum 2, Drums: custom LAPDR pattern
+      Sidechain: -6dB, Vocal stutter: bars 33-48"
+
+User: "Bass too loud"
+
+DJLab: → Calls vyke-produce.update_project()
+      ✅ "Bass lowered 3dB (now -15dB)"
+```
+
+---
+
+## Internal vyke-produce Architecture
+
+Even though vyke-produce doesn't have LLM orchestration, it still needs internal organization:
+
+### Option A: Simple Sequential (V2 Style)
+
 ```python
-from langgraph.graph import StateGraph
+def remix(self, inspiration_set: InspirationSet) -> ProductionResult:
+    """Simple sequential execution."""
+    
+    # 1. Load/generate patterns
+    drums = self.generate_drums(inspiration_set)
+    bass = self.generate_bass(inspiration_set)
+    
+    # 2. Process stems
+    vocals = self.process_vocals(inspiration_set)
+    
+    # 3. Build arrangement
+    arrangement = self.build_arrangement(inspiration_set, drums, bass, vocals)
+    
+    # 4. Apply mixing
+    mixed = self.apply_mixing(arrangement, inspiration_set)
+    
+    # 5. Export
+    return self.export_to_ableton(mixed)
+```
 
-# Define state
-class ProductionState(TypedDict):
-    user_input: str
-    parameters: dict
-    stems: dict
-    mix_settings: dict
-    messages: list
+### Option B: Internal Agents (No LLM, Just Workers)
 
-# Build graph manually
-workflow = StateGraph(ProductionState)
-workflow.add_node("parse_intent", parse_intent_node)
-workflow.add_node("ask_params", ask_params_node)
-workflow.add_node("separate_stems", stem_separation_node)
-# ... 10+ more nodes
+For complex workflows, vyke-produce can spin off internal worker agents (NOT LLM agents, just async workers):
 
-# Conditional routing
-workflow.add_conditional_edges(
-    "check_params",
-    route_based_on_completeness,
-    {"complete": "execute", "incomplete": "ask_params"}
+```python
+class StemProcessingWorker:
+    """Worker for stem processing. No LLM, just audio processing."""
+    async def process(self, stem_path: str, treatment: str) -> ProcessedStem:
+        pass
+
+class PatternGenerationWorker:
+    """Worker for MIDI pattern generation. Uses algorithms, not LLM."""
+    async def generate(self, genre: str, bpm: float) -> Pattern:
+        pass
+
+class MixingWorker:
+    """Worker for mixing. Applies predefined chains."""
+    async def mix(self, tracks: List[Track], style: str) -> MixedProject:
+        pass
+```
+
+These are **workers**, not **agents with LLM reasoning**.
+
+### Recommendation for vyke-produce
+
+**Use Option A (Sequential) for V3.0**, consider Option B (Workers) for V3.5+ if needed.
+
+Reason: Music production workflows are largely deterministic and sequential. We don't need complex agent orchestration inside vyke-produce - that's DJLab's job.
+
+---
+
+## Key Interfaces
+
+### DJLab → vyke-analyse
+
+```python
+# DJLab calls vyke-analyse directly
+from vyke import analyse, separate_stems
+
+analysis = analyse("madonna.mp3")
+stems = separate_stems("madonna.mp3")
+```
+
+### DJLab → vyke-produce
+
+```python
+# DJLab initializes producer with its resources
+from vyke_produce import Producer
+
+producer = Producer(
+    plugin_inventory=self.get_plugins(),      # DJLab provides
+    sound_vault_session=self.get_db_session(), # DJLab provides
+    live_api=self.live_api_service,           # DJLab provides
+)
+
+# DJLab builds InspirationSet through conversation
+inspiration = InspirationSet(
+    main_track_path="madonna.mp3",
+    target_genre="afro_circuit",
+    # ... complete spec
+)
+
+# DJLab calls producer
+result = await producer.remix(inspiration)
+```
+
+### vyke-produce → DJLab
+
+```python
+# Returns result, no callbacks
+return ProductionResult(
+    success=True,
+    als_path="/path/to/project.als",
+    plugins_used=["Serum 2", "FabFilter Pro-Q 3"],
 )
 ```
 
-### Recommendation: Hybrid Approach
+---
 
-**Decision:** Use wickit core + custom music extensions
+## Summary
 
-**Architecture:**
-```
-┌─────────────────────────────────────────────────────────────┐
-│  wickit (Core Framework)                                    │
-│  ├── maestro (orchestration)                                │
-│  ├── wizards (Chefs)                                        │
-│  ├── tricks (reusable skills)                               │
-│  ├── recipes (workflows)                                    │
-│  └── guardian (security)                                    │
-├─────────────────────────────────────────────────────────────┤
-│  vyke-produce (Music-Specific Extensions)                   │
-│  ├── MusicMaestro (extends Maestro)                         │
-│  ├── *Chef classes (extend Wizard)                          │
-│  │   ├── MixingChef                                         │
-│  │   ├── MasteringChef                                      │
-│  │   ├── VocalChef                                          │
-│  │   └── GenreChefs (AfroCircuitChef, etc.)                 │
-│  ├── MusicSkills (extend Trick)                             │
-│  │   ├── StemSeparation                                     │
-│  │   ├── PatternGeneration                                  │
-│  │   └── AbletonExport                                      │
-│  └── MusicRecipes (extend Recipe)                           │
-│      ├── RemixRecipe                                        │
-│      ├── TextToTrackRecipe                                  │
-│      └── ReproductionRecipe                                 │
-└─────────────────────────────────────────────────────────────┘
-```
+### DJLab (Application Layer)
+- ✅ Has LLM (Maestro)
+- ✅ Manages conversation
+- ✅ Orchestrates workflow
+- ✅ Calls vyke-analyse for analysis
+- ✅ Calls vyke-produce for generation
+- ✅ Shows results to user
 
-**Benefits:**
-- Get wickit's proven foundation
-- Focus on music-specific logic
-- Contribute improvements back to wickit
-- 7-week timeline achievable
+### vyke-produce (Library Layer)
+- ❌ NO LLM
+- ❌ NO conversation
+- ❌ NO orchestration
+- ✅ Receives complete specs
+- ✅ Generates Ableton projects
+- ✅ Returns files
+
+### vyke-analyse (Library Layer)
+- ❌ NO LLM (uses ML models, not LLMs)
+- ✅ Receives audio files
+- ✅ Returns analysis data
+- ✅ Called by DJLab
 
 ---
 
-## Implementation Phases
+**Correction from V3.0 Design:**
 
-### Phase 1: Core Orchestration (Weeks 1-2)
-- Integrate wickit.maestro
-- Build MusicMaestro subclass
-- Implement conversation state management
-- Basic intent parsing
+The previous version of this document incorrectly suggested vyke-produce would have LLM orchestration. That was wrong. **DJLab is the orchestrator, vyke-produce is just a tool it uses.**
 
-### Phase 2: Chef Development (Weeks 3-4)
-- Build MixingChef, MasteringChef, VocalChef
-- Create Chef knowledge bases
-- Implement consultation patterns
-
-### Phase 3: Worker Agents (Weeks 5-6)
-- StemSeparationAgent
-- PatternGenerationAgent
-- MixingAgent
-- ExportAgent
-
-### Phase 4: Recipes (Weeks 7-8)
-- RemixRecipe
-- TextToTrackRecipe
-- Integration with V2 services
-
-### Phase 5: Polish (Weeks 9-10)
-- Error handling
-- Edge cases
-- Testing
-- Documentation
-
-**Total: 10 weeks (or 7 with full wickit reuse)**
-
----
-
-## Open Questions
-
-1. **Real-time Constraints:** Can we do real-time generation during chat, or is it batch?
-2. **State Persistence:** How long do we keep agent sessions? (suggest: 24h default)
-3. **Cost Management:** LLM calls per production? (estimate: 50-100 calls per remix)
-4. **Parallel Agents:** How many agents can run simultaneously? (suggest: 3 max)
-5. **User Override:** How to let user take control mid-production?
-
----
-
-**Next Steps:**
-1. Review wickit codebase for integration points
-2. Define MusicMaestro interface
-3. Create first Chef prototype (MixingChef)
-4. Build proof-of-concept RemixRecipe
+This makes vyke-produce simpler, more focused, and easier to test. DJLab handles the complexity of user interaction.
