@@ -1,127 +1,137 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Instagram, Twitter, Youtube, Music2, Mail } from 'lucide-react'
+import { LukeVykeLogo } from './logo'
+import { Instagram, Music, ExternalLink, Mail } from 'lucide-react'
 
-const socialLinks = [
-  { icon: Instagram, href: '#', label: 'Instagram' },
-  { icon: Twitter, href: '#', label: 'Twitter' },
-  { icon: Youtube, href: '#', label: 'YouTube' },
-  { icon: Music2, href: '#', label: 'SoundCloud' },
-]
-
-const footerLinks = [
-  {
-    title: 'Music',
-    links: ['Mixes', 'Releases', 'Bootlegs', 'Free Downloads']
-  },
-  {
-    title: 'Connect',
-    links: ['Tour Dates', 'Bookings', 'Press Kit', 'Contact']
-  },
-  {
-    title: 'Follow',
-    links: ['Instagram', 'Twitter', 'YouTube', 'Spotify']
-  }
-]
+const FOOTER_LINKS = {
+  music: [
+    { label: 'SoundCloud', href: '#' },
+    { label: 'Mixcloud', href: '#' },
+    { label: 'Spotify', href: '#' },
+    { label: 'Apple Music', href: '#' },
+  ],
+  connect: [
+    { label: 'Instagram', href: 'https://instagram.com/lukevyke' },
+    { label: 'Twitter', href: '#' },
+    { label: 'YouTube', href: '#' },
+    { label: 'Resident Advisor', href: '#' },
+  ],
+  info: [
+    { label: 'Booking', href: 'mailto:bookings@lukevyke.com' },
+    { label: 'Press Kit', href: '#' },
+    { label: 'Tech Rider', href: '#' },
+    { label: 'Privacy Policy', href: '#' },
+  ],
+}
 
 export function Footer() {
   return (
-    <footer className="relative border-t border-white/10">
-      <div className="max-w-7xl mx-auto px-8 md:px-16 py-20">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12">
-          {/* Brand column */}
-          <div className="lg:col-span-2">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-            >
-              <h3 className="text-3xl font-bold text-gradient">VYKE</h3>
-              <p className="mt-4 text-white/40 max-w-sm">
-                Electronic music artist creating sonic experiences that move bodies and souls.
-              </p>
-              
-              {/* Social icons */}
-              <div className="flex gap-4 mt-6">
-                {socialLinks.map((social, index) => (
-                  <motion.a
-                    key={social.label}
-                    href={social.href}
-                    className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-white/60 hover:text-white hover:border-white/30 transition-colors"
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.95 }}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: index * 0.1 }}
-                    aria-label={social.label}
-                  >
-                    <social.icon size={18} />
-                  </motion.a>
-                ))}
-              </div>
-            </motion.div>
+    <footer className="relative py-16 px-4 md:px-8 lg:px-16 border-t border-white/10">
+      {/* Gradient line */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#e056c8] to-transparent" />
+
+      <div className="max-w-7xl mx-auto">
+        <div className="grid md:grid-cols-4 gap-12 mb-12">
+          {/* Logo & tagline */}
+          <div className="md:col-span-1">
+            <div className="flex items-center gap-3 mb-4">
+              <LukeVykeLogo size="md" animated={false} />
+            </div>
+            <p className="text-white/50 text-sm leading-relaxed">
+              Circuit House • Afro Circuit • Afro House<br />
+              London-based DJ & producer
+            </p>
+            
+            {/* Social icons */}
+            <div className="flex gap-3 mt-6">
+              <a 
+                href="https://instagram.com/lukevyke" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-[#e056c8]/20 transition-colors"
+              >
+                <Instagram className="w-5 h-5 text-white/70" />
+              </a>
+              <a 
+                href="#" 
+                className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-[#8b5cf6]/20 transition-colors"
+              >
+                <Music className="w-5 h-5 text-white/70" />
+              </a>
+              <a 
+                href="mailto:bookings@lukevyke.com" 
+                className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-[#6366f1]/20 transition-colors"
+              >
+                <Mail className="w-5 h-5 text-white/70" />
+              </a>
+            </div>
           </div>
 
-          {/* Link columns */}
-          {footerLinks.map((column, colIndex) => (
-            <motion.div
-              key={column.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: colIndex * 0.1 }}
-            >
-              <h4 className="text-sm font-semibold tracking-widest uppercase text-white/40 mb-4">
-                {column.title}
-              </h4>
-              <ul className="space-y-3">
-                {column.links.map((link) => (
-                  <li key={link}>
-                    <a 
-                      href="#" 
-                      className="text-white/60 hover:text-white transition-colors"
-                    >
-                      {link}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-          ))}
+          {/* Music links */}
+          <div>
+            <h4 className="text-white font-medium mb-4 text-sm tracking-wider uppercase">Music</h4>
+            <ul className="space-y-3">
+              {FOOTER_LINKS.music.map((link) => (
+                <li key={link.label}>
+                  <a 
+                    href={link.href}
+                    className="text-white/50 hover:text-[#e056c8] transition-colors text-sm flex items-center gap-2 group"
+                  >
+                    {link.label}
+                    <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Connect links */}
+          <div>
+            <h4 className="text-white font-medium mb-4 text-sm tracking-wider uppercase">Connect</h4>
+            <ul className="space-y-3">
+              {FOOTER_LINKS.connect.map((link) => (
+                <li key={link.label}>
+                  <a 
+                    href={link.href}
+                    target={link.href.startsWith('http') ? '_blank' : undefined}
+                    rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+                    className="text-white/50 hover:text-[#8b5cf6] transition-colors text-sm flex items-center gap-2 group"
+                  >
+                    {link.label}
+                    <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Info links */}
+          <div>
+            <h4 className="text-white font-medium mb-4 text-sm tracking-wider uppercase">Info</h4>
+            <ul className="space-y-3">
+              {FOOTER_LINKS.info.map((link) => (
+                <li key={link.label}>
+                  <a 
+                    href={link.href}
+                    className="text-white/50 hover:text-white transition-colors text-sm"
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
 
         {/* Bottom bar */}
-        <motion.div 
-          className="mt-20 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-        >
-          <p className="text-sm text-white/40">
-            © 2026 Luke Vyke. All rights reserved.
+        <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-white/30 text-sm">
+            © {new Date().getFullYear()} Luke Vyke. All rights reserved.
           </p>
-          <div className="flex gap-6 text-sm text-white/40">
-            <a href="#" className="hover:text-white transition-colors">Privacy</a>
-            <a href="#" className="hover:text-white transition-colors">Terms</a>
-            <a href="#" className="hover:text-white transition-colors">Cookies</a>
-          </div>
-        </motion.div>
-
-        {/* Large background text */}
-        <div className="absolute bottom-0 left-0 right-0 overflow-hidden pointer-events-none">
-          <motion.p 
-            className="text-[20vw] font-bold text-white/[0.02] leading-none text-center -mb-[5vw]"
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1 }}
-          >
-            VYKE
-          </motion.p>
+          <p className="text-white/30 text-sm">
+            Built with code, caffeine, and heavy basslines.
+          </p>
         </div>
       </div>
     </footer>

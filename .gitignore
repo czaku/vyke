@@ -67,3 +67,8 @@ secrets/
 *.key
 
 # vyke.ai is a separate repo (was djlab)
+
+# Next.js build output
+.next/
+out/
+dist/

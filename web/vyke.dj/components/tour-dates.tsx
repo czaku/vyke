@@ -1,188 +1,222 @@
 'use client'
 
 import { useRef } from 'react'
-import { motion, useScroll, useTransform } from 'framer-motion'
-import { MapPin, Calendar, ArrowRight } from 'lucide-react'
+import { motion, useScroll, useTransform, useInView } from 'framer-motion'
+import { MapPin, Calendar, Ticket, ArrowRight } from 'lucide-react'
 
-const tourDates = [
+const GIGS = [
   {
     id: 1,
     date: "FEB 14",
-    venue: " fabric",
+    year: "2026",
+    venue: "Fabric",
     city: "London, UK",
-    event: "Valentine's Warehouse",
-    status: "on-sale",
-    color: "#ff3366"
+    country: "UK",
+    event: "Valentine's Circuit Night",
+    type: "Club",
+    status: "upcoming",
+    ticketUrl: "#",
+    lineup: "Luke Vyke, Special Guest TBA"
   },
   {
     id: 2,
-    date: "FEB 28",
-    venue: "Printworks",
+    date: "MAR 08",
+    year: "2026",
+    venue: "Ministry of Sound",
     city: "London, UK",
-    event: "Drumcode Night",
-    status: "on-sale",
-    color: "#8833ff"
+    country: "UK",
+    event: "Afro House Sessions",
+    type: "Club",
+    status: "upcoming",
+    ticketUrl: "#",
+    lineup: "Luke Vyke, More TBA"
   },
   {
     id: 3,
-    date: "MAR 08",
-    venue: "Berghain",
-    city: "Berlin, DE",
-    event: "Klubnacht",
-    status: "sold-out",
-    color: "#33ff88"
+    date: "APR 19",
+    year: "2026",
+    venue: "Printworks",
+    city: "London, UK",
+    country: "UK",
+    event: "Spring Warehouse Party",
+    type: "Warehouse",
+    status: "upcoming",
+    ticketUrl: "#",
+    lineup: "Luke Vyke, International Headliner"
   },
   {
     id: 4,
-    date: "MAR 15",
+    date: "MAY 24",
+    year: "2026",
     venue: "Amnesia",
-    city: "Ibiza, ES",
-    event: "Opening Party",
-    status: "on-sale",
-    color: "#ffaa33"
+    city: "Ibiza, Spain",
+    country: "ES",
+    event: "Opening Weekend",
+    type: "Festival",
+    status: "upcoming",
+    ticketUrl: "#",
+    lineup: "Luke Vyke B2B, Resident DJs"
   },
   {
     id: 5,
-    date: "MAR 22",
-    venue: "Warehouse Project",
-    city: "Manchester, UK",
-    event: "RESISTANCE",
-    status: "on-sale",
-    color: "#3388ff"
-  }
+    date: "JUN 21",
+    year: "2026",
+    venue: "Studio 338",
+    city: "London, UK",
+    country: "UK",
+    event: "Summer Solstice Day Party",
+    type: "Day Party",
+    status: "upcoming",
+    ticketUrl: "#",
+    lineup: "Luke Vyke, Extended Set"
+  },
+  {
+    id: 6,
+    date: "JUL 12",
+    year: "2026",
+    venue: "DC-10",
+    city: "Ibiza, Spain",
+    country: "ES",
+    event: "CircoLoco",
+    type: "Festival",
+    status: "upcoming",
+    ticketUrl: "#",
+    lineup: "Luke Vyke, Lineup TBA"
+  },
 ]
 
 export function TourDates() {
   const containerRef = useRef<HTMLDivElement>(null)
+  const isInView = useInView(containerRef, { once: true, margin: "-100px" })
   
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"]
   })
 
-  const lineWidth = useTransform(scrollYProgress, [0.1, 0.6], ['0%', '100%'])
+  const progressWidth = useTransform(scrollYProgress, [0, 0.5], ['0%', '100%'])
 
   return (
     <section 
       ref={containerRef}
-      className="relative py-32 overflow-hidden"
+      className="relative py-32 px-4 md:px-8 lg:px-16 overflow-hidden"
     >
       {/* Background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black via-purple-950/20 to-black" />
-
-      <div className="relative z-10 max-w-7xl mx-auto px-8 md:px-16">
-        {/* Header */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.div 
-          className="mb-20"
+          className="orb orb-pink w-[600px] h-[600px] -left-40 bottom-0"
+          animate={{ 
+            scale: [1, 1.2, 1],
+            opacity: [0.2, 0.3, 0.2]
+          }}
+          transition={{ duration: 10, repeat: Infinity }}
+        />
+      </div>
+
+      <div className="max-w-6xl mx-auto relative z-10">
+        {/* Section header */}
+        <motion.div
           initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8 }}
+          className="mb-16"
         >
-          <span className="text-sm tracking-[0.3em] text-white/40 uppercase">Tour</span>
+          <span className="text-[#e056c8] text-sm tracking-[0.3em] uppercase">Tour</span>
           <h2 className="mt-4 text-5xl md:text-7xl font-bold">
-            <span className="text-gradient">Upcoming Dates</span>
+            Upcoming <span className="text-gradient-accent">Dates</span>
           </h2>
+          <p className="mt-4 text-white/60 max-w-xl">
+            Catch me at clubs, warehouses, and festivals across the UK and beyond.
+            More dates coming soon.
+          </p>
         </motion.div>
 
-        {/* Timeline container */}
+        {/* Timeline */}
         <div className="relative">
           {/* Progress line */}
-          <div className="absolute left-0 md:left-32 top-0 bottom-0 w-px bg-white/10">
+          <div className="absolute left-[100px] top-0 bottom-0 w-px bg-white/10 hidden md:block">
             <motion.div 
-              className="absolute top-0 left-0 w-full bg-gradient-to-b from-purple-500 to-pink-500"
-              style={{ height: lineWidth }}
+              className="absolute top-0 left-0 w-full bg-gradient-to-b from-[#e056c8] to-[#8b5cf6]"
+              style={{ height: progressWidth }}
             />
           </div>
 
-          {/* Tour dates */}
-          <div className="space-y-8">
-            {tourDates.map((gig, index) => (
+          {/* Gigs list */}
+          <div className="space-y-6">
+            {GIGS.map((gig, index) => (
               <motion.div
                 key={gig.id}
-                className="relative pl-8 md:pl-40 group cursor-pointer"
-                initial={{ opacity: 0, x: -50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ 
-                  duration: 0.6, 
-                  delay: index * 0.1,
-                  ease: [0.23, 1, 0.32, 1]
-                }}
+                initial={{ opacity: 0, x: -30 }}
+                animate={isInView ? { opacity: 1, x: 0 } : {}}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                className="group"
               >
-                {/* Timeline dot */}
-                <motion.div 
-                  className="absolute left-0 md:left-32 top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-white/30 bg-black group-hover:scale-150 transition-transform duration-300"
-                  style={{ borderColor: gig.color }}
-                />
-
-                {/* Card */}
-                <div className="relative p-6 md:p-8 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm group-hover:bg-white/10 group-hover:border-white/20 transition-all duration-300">
-                  <div className="flex flex-col md:flex-row md:items-center gap-6">
-                    {/* Date */}
-                    <div className="flex-shrink-0 w-24">
-                      <p className="text-2xl md:text-3xl font-bold text-gradient-accent">{gig.date.split(' ')[0]}</p>
-                      <p className="text-sm text-white/40">{gig.date.split(' ')[1]}</p>
+                <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-8 p-6 rounded-2xl transition-all duration-300 hover:glossy-card">
+                  {/* Date */}
+                  <div className="flex-shrink-0 w-[100px] text-center md:text-left">
+                    <div className="text-2xl md:text-3xl font-bold text-gradient-accent">
+                      {gig.date.split(' ')[0]}
                     </div>
-
-                    {/* Info */}
-                    <div className="flex-grow">
-                      <h3 className="text-xl md:text-2xl font-bold group-hover:text-gradient-accent transition-all duration-300">
-                        {gig.venue}
-                      </h3>
-                      <div className="flex flex-wrap items-center gap-4 mt-2 text-sm text-white/60">
-                        <span className="flex items-center gap-1">
-                          <MapPin size={14} />
-                          {gig.city}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Calendar size={14} />
-                          {gig.event}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* CTA */}
-                    <div className="flex-shrink-0">
-                      {gig.status === 'sold-out' ? (
-                        <span className="px-4 py-2 rounded-full bg-white/10 text-white/40 text-sm">
-                          Sold Out
-                        </span>
-                      ) : (
-                        <motion.button 
-                          className="flex items-center gap-2 px-6 py-3 rounded-full bg-white text-black font-medium text-sm group/btn"
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                        >
-                          Get Tickets
-                          <ArrowRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
-                        </motion.button>
-                      )}
-                    </div>
+                    <div className="text-sm text-white/50">{gig.date.split(' ')[1]}</div>
+                    <div className="text-xs text-white/30">{gig.year}</div>
                   </div>
 
-                  {/* Hover glow */}
-                  <div 
-                    className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-20 transition-opacity duration-300 pointer-events-none"
-                    style={{ background: `radial-gradient(circle at 50% 50%, ${gig.color}, transparent)` }}
-                  />
+                  {/* Timeline dot - hidden on mobile */}
+                  <div className="hidden md:flex flex-shrink-0 w-4 h-4 rounded-full bg-gradient-to-r from-[#e056c8] to-[#8b5cf6] items-center justify-center relative">
+                    <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#e056c8] to-[#8b5cf6] animate-ping opacity-20" />
+                  </div>
+
+                  {/* Info */}
+                  <div className="flex-1">
+                    <div className="flex flex-wrap items-center gap-2 mb-2">
+                      <h3 className="text-xl font-bold text-white group-hover:text-gradient-accent transition-all">
+                        {gig.event}
+                      </h3>
+                      <span className="px-2 py-0.5 text-xs bg-white/10 text-white/70 rounded">
+                        {gig.type}
+                      </span>
+                    </div>
+                    
+                    <div className="flex flex-wrap items-center gap-4 text-sm text-white/60">
+                      <span className="flex items-center gap-1.5">
+                        <MapPin className="w-4 h-4 text-[#e056c8]" />
+                        {gig.venue}, {gig.city}
+                      </span>
+                    </div>
+
+                    {gig.lineup && (
+                      <p className="mt-2 text-xs text-white/40">
+                        {gig.lineup}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Ticket button */}
+                  <motion.a
+                    href={gig.ticketUrl}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="flex-shrink-0 flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#e056c8] to-[#8b5cf6] rounded-full text-sm font-medium text-white shadow-lg shadow-[#e056c8]/25 hover:shadow-xl hover:shadow-[#e056c8]/40 transition-shadow"
+                  >
+                    <Ticket className="w-4 h-4" />
+                    Get Tickets
+                    <ArrowRight className="w-4 h-4" />
+                  </motion.a>
                 </div>
               </motion.div>
             ))}
           </div>
 
-          {/* View all link */}
-          <motion.div 
-            className="pl-8 md:pl-40 mt-12"
+          {/* More dates coming */}
+          <motion.div
             initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.5 }}
+            animate={isInView ? { opacity: 1 } : {}}
+            transition={{ delay: 0.8 }}
+            className="mt-12 text-center"
           >
-            <a href="#" className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors">
-              View all dates
-              <ArrowRight size={16} />
-            </a>
+            <p className="text-white/40 text-sm">
+              More dates announced soon. Follow on Instagram for updates.
+            </p>
           </motion.div>
         </div>
       </div>

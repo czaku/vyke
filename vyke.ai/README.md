@@ -1110,7 +1110,7 @@ automationManager->exportToAbleton("Circuit_House_Automation", settings);
 ### **Build the Library:**
 ```bash
 # Compile library components
-g++ -shared -fPIC -I./library ./library/**/*.cpp -o libvykeai.so
+g++ -shared -fPIC -I./library ./library/**/*.cpp -o libdjlab.so
 
 # Run tests
 g++ -std=c++17 ./tests/simple_tests.cpp -o tests/simple_tests

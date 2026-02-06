@@ -1,50 +1,92 @@
 'use client'
 
 import { useRef } from 'react'
-import { motion, useScroll, useTransform } from 'framer-motion'
-import { Play, Clock, Music } from 'lucide-react'
+import { motion, useScroll, useTransform, useInView } from 'framer-motion'
+import Image from 'next/image'
+import { Play, Clock, Music, ExternalLink } from 'lucide-react'
 
-const mixes = [
+const MIXES = [
   {
     id: 1,
-    title: "Afro Circuit Sessions",
-    subtitle: "Vol. 12",
-    duration: "1:23:45",
-    genre: "Afro House",
-    color: "from-orange-500 to-red-600",
-    description: "Deep journey through contemporary Afro-Caribbean electronic sounds"
+    title: "Afro Circuit Sunrise",
+    subtitle: "Miami Poolside Sessions",
+    duration: "1:24:36",
+    genre: "Afro Circuit / 123 BPM",
+    description: "Sun-drenched grooves for those golden hour moments",
+    image: "/images/dj/secondary_dj.jpeg",
+    platforms: [
+      { name: "SoundCloud", url: "#" },
+      { name: "Mixcloud", url: "#" },
+    ]
   },
   {
     id: 2,
-    title: "Warehouse Techno",
-    subtitle: "Live Set",
-    duration: "2:15:00",
-    genre: "Techno",
-    color: "from-purple-600 to-blue-600",
-    description: "Raw warehouse energy captured live in London"
+    title: "Warehouse Circuit",
+    subtitle: "London Underground",
+    duration: "2:15:42",
+    genre: "Circuit House / 128 BPM",
+    description: "Peak-time energy for warehouse raves and dark rooms",
+    image: "/images/dj/side.jpeg",
+    platforms: [
+      { name: "SoundCloud", url: "#" },
+      { name: "Spotify", url: "#" },
+    ]
   },
   {
     id: 3,
-    title: "Sunset Grooves",
-    subtitle: "Ibiza 2025",
-    duration: "1:45:30",
-    genre: "Deep House",
-    color: "from-pink-500 to-purple-600",
-    description: "Sunset session from the White Isle"
+    title: "Tribal Foundations",
+    subtitle: "Afro House Essential Mix",
+    duration: "1:08:15",
+    genre: "Afro House / 122 BPM",
+    description: "Deep, soulful rhythms from Lagos to London",
+    image: "/images/dj/front_casual.jpeg",
+    platforms: [
+      { name: "SoundCloud", url: "#" },
+    ]
   },
   {
     id: 4,
-    title: "After Hours",
-    subtitle: "Underground",
-    duration: "3:00:00",
-    genre: "Minimal",
-    color: "from-green-500 to-teal-600",
-    description: "Deep minimal selections for the late night hours"
-  }
+    title: "After Hours Vyke",
+    subtitle: "Sunrise Set",
+    duration: "1:45:22",
+    genre: "Deep Circuit / 120 BPM",
+    description: "When the party winds down but the vibe continues",
+    image: "/images/dj/main_dj.jpeg",
+    platforms: [
+      { name: "SoundCloud", url: "#" },
+      { name: "Mixcloud", url: "#" },
+    ]
+  },
+  {
+    id: 5,
+    title: "Festival Energy",
+    subtitle: "Live from Ibiza",
+    duration: "1:32:18",
+    genre: "Circuit House / 126 BPM",
+    description: "Main stage power for festival crowds",
+    image: "/images/dj/secondary_dj.jpeg",
+    platforms: [
+      { name: "SoundCloud", url: "#" },
+    ]
+  },
+  {
+    id: 6,
+    title: "Late Night Grooves",
+    subtitle: "Studio Sessions Vol. 1",
+    duration: "0:58:44",
+    genre: "Afro Circuit / 124 BPM",
+    description: "Intimate vibes recorded live in the studio",
+    image: "/images/dj/side.jpeg",
+    platforms: [
+      { name: "SoundCloud", url: "#" },
+      { name: "Spotify", url: "#" },
+    ]
+  },
 ]
 
 export function FeaturedMixes() {
   const containerRef = useRef<HTMLDivElement>(null)
+  const isInView = useInView(containerRef, { once: true, margin: "-100px" })
   
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -52,7 +94,6 @@ export function FeaturedMixes() {
   })
 
   const x = useTransform(scrollYProgress, [0, 1], ['0%', '-20%'])
-  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0])
 
   return (
     <section 
@@ -60,103 +101,114 @@ export function FeaturedMixes() {
       className="relative py-32 overflow-hidden"
     >
       {/* Section header */}
-      <motion.div 
-        className="px-8 md:px-16 mb-16"
-        initial={{ opacity: 0, y: 50 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
-      >
-        <span className="text-sm tracking-[0.3em] text-white/40 uppercase">Latest</span>
-        <h2 className="mt-4 text-5xl md:text-7xl font-bold">
-          <span className="text-gradient">Mixes</span>
-        </h2>
-      </motion.div>
+      <div className="px-4 md:px-8 lg:px-16 mb-16">
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8 }}
+        >
+          <span className="text-[#e056c8] text-sm tracking-[0.3em] uppercase">Mixes</span>
+          <h2 className="mt-4 text-5xl md:text-7xl font-bold">
+            Featured <span className="text-gradient-accent">Sets</span>
+          </h2>
+          <p className="mt-4 text-white/60 max-w-xl">
+            Curated mixes spanning Circuit House, Afro Circuit, and Afro House. 
+            Each set tells a story—find your vibe.
+          </p>
+        </motion.div>
+      </div>
 
-      {/* Horizontal scrolling cards */}
+      {/* Horizontal scrolling mix cards */}
       <motion.div 
-        className="flex gap-6 px-8 md:px-16"
+        className="flex gap-6 px-4 md:px-8 lg:px-16 pb-8"
         style={{ x }}
       >
-        {mixes.map((mix, index) => (
+        {MIXES.map((mix, index) => (
           <motion.div
             key={mix.id}
-            className="relative flex-shrink-0 w-[350px] md:w-[450px] group cursor-pointer"
-            initial={{ opacity: 0, y: 100 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ 
-              duration: 0.8, 
-              delay: index * 0.1,
-              ease: [0.23, 1, 0.32, 1]
-            }}
+            initial={{ opacity: 0, y: 50 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: index * 0.1 }}
+            className="flex-shrink-0 w-[350px] md:w-[400px] group"
           >
-            {/* Card background */}
-            <div className={`relative h-[500px] rounded-3xl overflow-hidden bg-gradient-to-br ${mix.color} p-8 flex flex-col justify-between`}>
-              {/* Animated gradient overlay */}
-              <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-500" />
-              
+            <div className="relative h-[500px] rounded-2xl overflow-hidden glossy-card">
+              {/* Background image */}
+              <div className="absolute inset-0">
+                <Image
+                  src={mix.image}
+                  alt={mix.title}
+                  fill
+                  className="object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/50 to-transparent" />
+              </div>
+
               {/* Content */}
-              <div className="relative z-10">
-                <div className="flex items-center gap-2 text-white/80">
-                  <Music size={16} />
-                  <span className="text-xs tracking-widest uppercase">{mix.genre}</span>
+              <div className="absolute inset-0 p-6 flex flex-col justify-end">
+                {/* Genre badge */}
+                <motion.div 
+                  className="absolute top-6 left-6"
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.2 }}
+                >
+                  <span className="px-3 py-1 text-xs font-medium bg-[#e056c8]/20 text-[#e056c8] rounded-full border border-[#e056c8]/30">
+                    {mix.genre}
+                  </span>
+                </motion.div>
+
+                {/* Play button - appears on hover */}
+                <motion.button
+                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-full bg-gradient-to-r from-[#e056c8] to-[#8b5cf6] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-xl shadow-[#e056c8]/30"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Play className="w-8 h-8 text-white ml-1" fill="white" />
+                </motion.button>
+
+                {/* Mix info */}
+                <div className="space-y-3">
+                  <h3 className="text-2xl font-bold text-white group-hover:text-gradient-accent transition-all duration-300">
+                    {mix.title}
+                  </h3>
+                  <p className="text-[#8b5cf6] text-sm font-medium">{mix.subtitle}</p>
+                  <p className="text-white/60 text-sm line-clamp-2">{mix.description}</p>
+
+                  {/* Duration */}
+                  <div className="flex items-center gap-2 text-white/50 text-sm">
+                    <Clock className="w-4 h-4" />
+                    <span>{mix.duration}</span>
+                  </div>
+
+                  {/* Platform links */}
+                  <div className="flex gap-3 pt-4">
+                    {mix.platforms.map((platform) => (
+                      <a
+                        key={platform.name}
+                        href={platform.url}
+                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-white/70 bg-white/5 rounded-full hover:bg-white/10 transition-colors border border-white/10"
+                      >
+                        <Music className="w-3 h-3" />
+                        {platform.name}
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                    ))}
+                  </div>
                 </div>
-              </div>
-
-              <div className="relative z-10">
-                <h3 className="text-3xl md:text-4xl font-bold text-white leading-tight">
-                  {mix.title}
-                </h3>
-                <p className="mt-2 text-lg text-white/80">{mix.subtitle}</p>
-                <p className="mt-4 text-sm text-white/60 leading-relaxed">
-                  {mix.description}
-                </p>
-              </div>
-
-              {/* Play button overlay */}
-              <motion.div 
-                className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                whileHover={{ scale: 1.1 }}
-              >
-                <div className="w-20 h-20 rounded-full bg-white flex items-center justify-center shadow-2xl">
-                  <Play size={32} className="text-black ml-1" fill="black" />
-                </div>
-              </motion.div>
-
-              {/* Bottom info */}
-              <div className="relative z-10 flex items-center gap-2 text-white/60">
-                <Clock size={16} />
-                <span className="text-sm">{mix.duration}</span>
               </div>
             </div>
-
-            {/* Card shadow/glow */}
-            <div className={`absolute -inset-1 bg-gradient-to-br ${mix.color} rounded-3xl blur-xl opacity-0 group-hover:opacity-30 transition-opacity duration-500 -z-10`} />
           </motion.div>
         ))}
-
-        {/* "View All" card */}
-        <motion.div
-          className="relative flex-shrink-0 w-[350px] md:w-[450px] h-[500px] rounded-3xl border border-white/10 flex items-center justify-center group cursor-pointer hover:border-white/30 transition-colors duration-300"
-          initial={{ opacity: 0, y: 100 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-        >
-          <div className="text-center">
-            <div className="w-16 h-16 rounded-full border border-white/30 flex items-center justify-center mx-auto mb-4 group-hover:bg-white group-hover:text-black transition-all duration-300">
-              <span className="text-2xl">→</span>
-            </div>
-            <p className="text-lg font-medium">View All Mixes</p>
-            <p className="text-sm text-white/40 mt-2">Archive of past sets</p>
-          </div>
-        </motion.div>
       </motion.div>
 
-      {/* Background decorative elements */}
-      <div className="absolute top-1/2 left-0 w-96 h-96 bg-purple-600/20 rounded-full blur-[120px] -translate-y-1/2 pointer-events-none" />
-      <div className="absolute bottom-0 right-0 w-96 h-96 bg-pink-600/20 rounded-full blur-[120px] pointer-events-none" />
+      {/* Scroll hint */}
+      <div className="px-4 md:px-8 lg:px-16 mt-8">
+        <div className="flex items-center gap-4 text-white/40 text-sm">
+          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+          <span>Scroll for more mixes</span>
+          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+        </div>
+      </div>
     </section>
   )
 }

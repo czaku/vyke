@@ -224,7 +224,7 @@ NOT:
 ## PROJECT STRUCTURE
 
 ```
-vykeai/
+djlab/
 ├── api/                    # FastAPI backend
 │   ├── app/
 │   │   ├── api/           # API endpoints
@@ -238,70 +238,6 @@ vykeai/
 │       ├── Views/         # SwiftUI views
 │       └── Services/      # Backend service, etc.
 └── docs/                   # Documentation
-```
-
----
-
-## CENTRALIZED CONFIGURATION (Single Source of Truth)
-
-### App Config (`app/src/config/app.ts`)
-**Always use this for app-wide values - NEVER hardcode:**
-```typescript
-import { APP_CONFIG, getVersionString } from '../config/app';
-
-// Version
-APP_CONFIG.version        // "0.2.0"
-getVersionString()        // "v0.2.0"
-
-// Branding
-APP_CONFIG.name           // "vyke.ai"
-APP_CONFIG.tagline        // "AI Music Production"
-APP_CONFIG.fullDescription // "Your AI DJ & Production Lab"
-
-// Support
-APP_CONFIG.supportEmail   // "support@vykeai.app"
-
-// Backend
-APP_CONFIG.backend.name   // "FastAPI + Python 3.12"
-```
-
-### Environment Config (`app/src/config/environment.ts`)
-**Environment-specific settings (port ranges, timeouts):**
-```typescript
-import { config, currentEnvironment } from '../config/environment';
-
-config.portRange     // [8000, 8009] (production) | [8010, 8019] (dev)
-config.serviceId     // "vykeai-api"
-config.apiTimeout    // 5000ms
-```
-
-### Backend Config (`api/app/config.py`)
-Uses `wickit.flavour` for unified environment detection:
-```python
-from app.config import get_settings, get_environment
-
-settings = get_settings()
-settings.ENV         # "development" | "production" | "mock" | "test"
-settings.PORT        # 8001 (dev) | 8000 (prod)
-settings.APP_NAME    # "vyke.ai-Dev" | "vyke.ai"
-```
-
-### Port Ranges (Frontend ↔ Backend Must Match)
-| Environment | Port Range | Default Port |
-|-------------|------------|--------------|
-| production  | 8000-8009  | 8000         |
-| development | 8010-8019  | 8010         |
-| mock        | 8020-8029  | 8020         |
-| test        | 8030-8039  | 8030         |
-
-### Startup Scripts
-Use these to ensure consistent environment:
-```bash
-# Start both frontend and backend
-./scripts/start-dev.sh [prod|dev|mock|test]
-
-# Start only backend
-./scripts/start-backend.sh [production|development|mock|test]
 ```
 
 ---
