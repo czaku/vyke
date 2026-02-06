@@ -2,7 +2,7 @@
 
 **Coordinated Development Across All Libraries**
 
-**Version:** 1.1  
+**Version:** 1.2  
 **Date:** February 6, 2026  
 **Last Updated:** February 6, 2026
 
@@ -39,7 +39,7 @@ Q1          Q2          Q3          Q4
 
 | Library | Version | Status | Next Milestone |
 |---------|---------|--------|----------------|
-| vyke-analyse | v0.6.0 | Active Development | v0.7.0 (Stem Separation) |
+| vyke-analyse | v0.7.0 | Active Development | v0.8.0 (Vocal & Intro Detection) |
 | vyke-produce | - | Planning Complete | v0.1.0 (Core) |
 | vyke-play | - | Planning Complete | v0.1.0 (Foundation) |
 
@@ -90,31 +90,19 @@ Q1          Q2          Q3          Q4
 - Track boundary detection (multi-feature fusion)
 - Transition analysis (type classification, quality scoring)
 
+### Phase 5: Stem Separation ✅
+- HTDemucs reimplementation (native PyTorch, no external deps)
+- HPSS harmonic/percussive separation
+- Pretrained weight loading from Facebook
+- Unified `vyke.separate()` API with 4-stem output
+- GPU/MPS/CPU device selection
+- Chunked processing for long audio
+
 ---
 
 ## Q1 2026: Remaining Analysis Work
 
-### February: Stem Separation (vyke-analyse v0.7.0) ⏳ IN PROGRESS
-
-**Demucs Integration:**
-- [ ] Wrap Demucs htdemucs/htdemucs_ft models
-- [ ] GPU/MPS/CPU device selection
-- [ ] Memory-efficient chunked processing
-- [ ] 4-stem output (drums, bass, vocals, other)
-
-**HPSS (Lightweight Alternative):**
-- [ ] Median-filter harmonic/percussive separation
-- [ ] Wiener mask computation
-- [ ] Residual extraction
-
-**UVR/MDX-Net (Best Quality):**
-- [ ] MDX23C integration for superior vocals
-- [ ] Two-pass mode (MDX vocals + Demucs instruments)
-- [ ] Model auto-download and caching
-
-**Deliverable:** `vyke.separate()` with multiple engine options
-
-### March: Vocal & Intro Detection (vyke-analyse v0.8.0)
+### February: Vocal & Intro Detection (vyke-analyse v0.8.0) ⏳ IN PROGRESS
 
 **Vocal Detection:**
 - [ ] Vocal activity detection per frame
@@ -128,11 +116,11 @@ Q1          Q2          Q3          Q4
 - [ ] Outro type classification
 - [ ] Mix-in/mix-out point optimization
 
-**Deliverable:** `vyke.detect_vocals()` and intro/outro classification
+**Deliverable:** `vyke.detect_vocals()` and enhanced intro/outro classification
 
 ---
 
-### April: Advanced Features (vyke-analyse v0.9.0)
+### March: Advanced Features (vyke-analyse v0.9.0)
 
 **Pitch & Melody:**
 - [ ] CREPE-style pitch tracking
@@ -309,10 +297,10 @@ Q1          Q2          Q3          Q4
 ```
 vyke-analyse v0.6.0 ──┐ (DONE: structure, energy, chords, genre, DJ sets)
                       │
-vyke-analyse v0.7.0 ──┼──► vyke-produce v0.1.0
-   (stems)            │         (can start after 0.7)
+vyke-analyse v0.7.0 ──┼──► vyke-produce v0.1.0 (DONE: stems)
+   (stems ✅)         │         (can start now!)
                       │
-vyke-analyse v0.8.0 ──┘ (vocals, intro/outro)
+vyke-analyse v0.8.0 ──┘ (vocals, intro/outro - in progress)
                             │
                             ▼
                       vyke-produce v1.0
@@ -341,10 +329,10 @@ vyke-analyse v0.8.0 ──┘ (vocals, intro/outro)
 | v0.4.0 | Feb 3 | Track structure, phrases, mix points | ✅ Done |
 | v0.5.0 | Feb 4 | Energy, loudness, waveform | ✅ Done |
 | v0.6.0 | Feb 5 | Chords, genre, Rekordbox export, DJ sets | ✅ Done |
-| **v0.7.0** | **Feb 10** | **Stem separation (Demucs, HPSS, UVR)** | **⏳ In Progress** |
-| v0.8.0 | Feb 20 | Vocal detection, intro/outro types | Planned |
-| v0.9.0 | Mar 15 | Pitch tracking, per-stem analysis | Planned |
-| v1.0.0 | Mar 31 | Stable API, optimization | Planned |
+| **v0.7.0** | **Feb 6** | **Stem separation (HTDemucs, HPSS)** | **✅ Done** |
+| **v0.8.0** | **Feb 15** | **Vocal detection, intro/outro types** | **⏳ In Progress** |
+| v0.9.0 | Mar 1 | Pitch tracking, per-stem analysis | Planned |
+| v1.0.0 | Mar 15 | Stable API, optimization | Planned |
 
 ### vyke-produce
 
@@ -447,4 +435,4 @@ vyke-analyse v0.8.0 ──┘ (vocals, intro/outro)
 
 ---
 
-**Next Milestone:** February 10, 2026 - vyke-analyse v0.7.0 (Stem Separation with Demucs, HPSS, UVR/MDX-Net)
+**Next Milestone:** February 15, 2026 - vyke-analyse v0.8.0 (Vocal Detection & Enhanced Intro/Outro)
