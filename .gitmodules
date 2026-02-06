@@ -12,3 +12,7 @@
 	path = vyke-play
 	url = git@github.com:czaku/vyke-play.git
 	branch = main
+[submodule "vyke-ai"]
+	path = vyke.ai
+	url = git@github.com:czaku/vyke.ai.git
+	branch = main
