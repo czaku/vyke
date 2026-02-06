@@ -63,7 +63,7 @@ export function HeroSection() {
 
       {/* Main content */}
       <motion.div 
-        className="relative z-10 min-h-screen flex flex-col lg:flex-row items-center justify-center px-6 md:px-12 lg:px-16 py-24 lg:py-0 gap-8 lg:gap-12"
+        className="relative z-10 min-h-screen flex flex-col lg:flex-row items-center justify-center px-6 md:px-12 lg:px-16 py-32 lg:py-24 gap-8 lg:gap-12"
         style={{ y: containerY }}
       >
         
@@ -154,10 +154,10 @@ export function HeroSection() {
 
         {/* Right - Image with parallax */}
         <motion.div 
-          className="flex-1 flex justify-center lg:justify-end order-1 lg:order-2 max-w-lg lg:max-w-xl xl:max-w-2xl w-full"
+          className="flex-1 flex justify-center lg:justify-end order-1 lg:order-2 max-w-md lg:max-w-lg xl:max-w-xl w-full"
           style={{ y: imageY }}
         >
-          <div className="relative w-full aspect-[3/4] max-w-md lg:max-w-full">
+          <div className="relative w-full aspect-[4/5] max-w-sm md:max-w-md lg:max-w-full">
             {/* Glow behind image */}
             <motion.div
               className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[#e056c8]/40 to-[#8b5cf6]/40 blur-3xl"
@@ -187,7 +187,7 @@ export function HeroSection() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.8 }}
-              className="absolute -top-3 -right-3 md:-top-4 md:-right-4 px-4 py-2 bg-[#e056c8]/20 backdrop-blur-md rounded-full text-sm text-[#e056c8] border border-[#e056c8]/30"
+              className="absolute top-4 -right-2 md:top-6 md:-right-4 px-3 py-1.5 bg-[#e056c8]/20 backdrop-blur-md rounded-full text-xs md:text-sm text-[#e056c8] border border-[#e056c8]/30"
             >
               Circuit House
             </motion.div>
@@ -197,7 +197,7 @@ export function HeroSection() {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 1 }}
-              className="absolute -bottom-3 -left-3 md:-bottom-4 md:-left-4 px-4 py-2 bg-[#8b5cf6]/20 backdrop-blur-md rounded-full text-sm text-[#8b5cf6] border border-[#8b5cf6]/30"
+              className="absolute bottom-4 -left-2 md:bottom-6 md:-left-4 px-3 py-1.5 bg-[#8b5cf6]/20 backdrop-blur-md rounded-full text-xs md:text-sm text-[#8b5cf6] border border-[#8b5cf6]/30"
             >
               London, UK
             </motion.div>
