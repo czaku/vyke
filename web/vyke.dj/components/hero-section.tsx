@@ -36,7 +36,8 @@ export function HeroSection() {
   const scale = useTransform(smoothProgress, [0, 1], [1, 1.2])
   const textY = useTransform(smoothProgress, [0, 0.5], ['0%', '100px'])
   const imageScale = useTransform(smoothProgress, [0, 1], [1, 1.3])
-  const imageY = useTransform(smoothProgress, [0, 1], ['0%', '30%'])
+  // Start with image positioned to show face (top), then scroll down to reveal more
+  const imageY = useTransform(smoothProgress, [0, 1], ['-10%', '20%'])
 
   // Cycling text effect
   useEffect(() => {
@@ -62,7 +63,7 @@ export function HeroSection() {
             src="/images/dj/main_dj.jpeg"
             alt="Luke Vyke performing"
             fill
-            className="object-cover object-center"
+            className="object-cover object-top"
             priority
           />
           {/* Gradient overlays */}
