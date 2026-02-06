@@ -1,0 +1,14 @@
+[submodule "vyke-analyse"]
+	path = vyke-analyse
+	url = git@github.com:czaku/vyke-analyse.git
+	branch = main
+
+[submodule "vyke-produce"]
+	path = vyke-produce
+	url = git@github.com:czaku/vyke-produce.git
+	branch = main
+
+[submodule "vyke-play"]
+	path = vyke-play
+	url = git@github.com:czaku/vyke-play.git
+	branch = main
