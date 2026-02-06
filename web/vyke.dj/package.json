@@ -1,0 +1,42 @@
+{
+  "name": "vyke.dj-site",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "cms:dev": "tinacms dev -c \"next dev\"",
+    "cms:build": "tinacms build && next build"
+  },
+  "dependencies": {
+    "next": "^14.1.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "framer-motion": "^11.0.0",
+    "gsap": "^3.12.5",
+    "@gsap/react": "^2.1.0",
+    "lenis": "^1.0.42",
+    "three": "^0.160.0",
+    "@react-three/fiber": "^8.15.0",
+    "@react-three/drei": "^9.96.0",
+    "tinacms": "^1.5.0",
+    "@tinacms/cli": "^1.5.0",
+    "lucide-react": "^0.312.0",
+    "clsx": "^2.1.0",
+    "tailwind-merge": "^2.2.0",
+    "@tailwindcss/typography": "^0.5.10"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0",
+    "@types/node": "^20.10.0",
+    "@types/react": "^18.2.0",
+    "@types/three": "^0.160.0",
+    "tailwindcss": "^3.4.0",
+    "postcss": "^8.4.0",
+    "autoprefixer": "^10.4.0",
+    "eslint": "^8.56.0",
+    "eslint-config-next": "^14.1.0"
+  }
+}

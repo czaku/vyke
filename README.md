@@ -1,148 +1,113 @@
-# Vyke
+# Vyke Private Ecosystem
 
-**AI-Powered Music Production & Performance Ecosystem**
-
-> *"From analysis to production to performance. MIDI-first, plugin-native, genre-intelligent."*
-
----
-
-## Overview
-
-Vyke is a three-library ecosystem for professional music production and DJ performance:
-
-| Library | Purpose | Status |
-|---------|---------|--------|
-| **vyke-analyse** | GPU-accelerated track analysis | v0.3.0, Active Development |
-| **vyke-produce** | AI music production for Ableton | Planning Complete |
-| **vyke-play** | Live performance & Pioneer integration | Planning Complete |
+**Owner:** Luke Vyke  
+**Status:** Private repositories  
+**Last Updated:** February 2026
 
 ---
 
-## Quick Start
+## 🏗️ Repository Structure
+
+```
+~/dev/vyke/
+│
+├── 📁 vyke.ai/              ← WAS: djlab (renamed)
+│   └── AI Music Production Tool (FastAPI + Swift + Plugin)
+│
+├── 📁 vyke-analyse/         ← Git submodule (czaku/vyke-analyse)
+│   └── GPU-accelerated audio analysis library
+│
+├── 📁 vyke-produce/         ← Git submodule (czaku/vyke-produce)
+│   └── Music production & Ableton generation library
+│
+├── 📁 vyke-play/            ← Git submodule (czaku/vyke-play)
+│   └── Live performance & DJ tools library
+│
+├── 📁 libs/                 ← Shared dependencies
+│   └── Vendored libraries (essentia, allin1, etc.)
+│
+├── 📁 web/                  ← Public websites
+│   ├── vyke.ai/             ← Product landing page
+│   └── vyke.dj/             ← Personal DJ portfolio
+│
+└── 📄 README.md             ← This file
+```
+
+---
+
+## 🔒 Privacy & Security
+
+**ALL REPOSITORIES ARE PRIVATE**
+
+- No proprietary library code is exposed publicly
+- vyke-analyse, vyke-produce, vyke-play remain private
+- Only built binaries/distributions are shared (if ever)
+- Website repos can be public (marketing only, no source code)
+
+---
+
+## 🎯 Brand Hierarchy
+
+| Asset | Type | Purpose | Public? |
+|-------|------|---------|---------|
+| **vyke.dj** | Personal Brand | Luke Vyke DJ portfolio, gigs, mixes | ✅ Yes |
+| **vyke.ai** | Product | AI music production tool | ✅ Yes |
+| **vyke-*** | Libraries | Core proprietary technology | 🔒 Private |
+
+---
+
+## 🚀 Quick Start
 
 ```bash
-# Clone the entire ecosystem
-git clone --recursive git@github.com:luke/vyke.git
-cd vyke
+# Clone the ecosystem
+cd ~/dev/vyke
 
-# Initialize submodules
+# Initialize all submodules
 git submodule update --init --recursive
 
-# Install individual libraries
-cd libraries/vyke-analyse && pip install -e .
-cd ../vyke-produce && pip install -e .
-cd ../vyke-play && pip install -e .
+# Start vyke.ai development
+cd vyke.ai && ./start-dev.sh
+
+# Work on websites
+cd web/vyke.dj && npm run dev
+cd web/vyke.ai && npm run dev
 ```
 
 ---
 
-## Repository Structure
-
-```
-vyke/                          # Super Repository (this repo)
-├── README.md                  # This file
-├── VISION.md                  # Unified vision document
-├── STRATEGY.md                # Business & technical strategy
-├── ROADMAP.md                 # Master roadmap across all libraries
-├── docs/                      # Cross-cutting documentation
-│   ├── architecture/          # System-wide architecture
-│   ├── standards/             # Coding standards
-│   └── decisions/             # Architecture Decision Records
-├── examples/                  # Cross-library examples
-├── tools/                     # Shared tooling
-└── libraries/                 # Git submodules
-    ├── vyke-analyse/          # Track analysis
-    ├── vyke-produce/          # Music production
-    └── vyke-play/             # Live performance
-```
-
----
-
-## Core Workflows
-
-### 1. Track Analysis (Standalone)
-```python
-from vyke import analyse
-
-result = analyse("track.mp3")
-print(f"BPM: {result.bpm}, Key: {result.key}")
-```
-
-### 2. Track Production (Standalone)
-```python
-from vyke_produce import Studio
-
-studio = Studio()
-project = studio.create_project(genre="circuit_house", bpm=128)
-project.export("output.als")
-```
-
-### 3. Remix Workflow (Analyse → Produce)
-```python
-from vyke import analyse
-from vyke_produce import Producer
-
-# Analyze source tracks
-main_analysis = analyse("madonna.mp3")
-vocal_stems = analyse.separate_stems("madonna.mp3")
-
-# Create remix
-producer = Producer()
-result = producer.remix(
-    main_track="madonna.mp3",
-    target_genre="afro_circuit",
-    vocal_stem=vocal_stems.vocals
-)
-```
-
----
-
-## Documentation
-
-- [VISION.md](VISION.md) - The complete vision for the Vyke ecosystem
-- [STRATEGY.md](STRATEGY.md) - Development and business strategy
-- [ROADMAP.md](ROADMAP.md) - Master timeline across all libraries
-- [docs/architecture/](docs/architecture/) - System architecture
-- [examples/](examples/) - Working examples
-
----
-
-## Development
-
-### Working with Submodules
+## 📋 Submodules
 
 ```bash
+# Add a submodule
+git submodule add git@github.com:czaku/vyke-analyse.git vyke-analyse
+
 # Update all submodules to latest
 git submodule update --remote
 
-# Work on a specific library
-cd libraries/vyke-analyse
-# ... make changes ...
-git commit -am "Add feature"
-git push
-
-# Update super-repo reference
-cd ../..
-git add libraries/vyke-analyse
-git commit -m "Update vyke-analyse to latest"
+# Pin submodule to specific commit
+cd vyke-analyse && git checkout <commit> && cd .. && git add vyke-analyse
 ```
 
-### Adding Cross-Library Features
+---
 
-When a feature spans multiple libraries:
-1. Create ADR in `docs/decisions/`
-2. Implement in respective library repos
-3. Add integration example in `examples/`
-4. Update master ROADMAP.md
+## 🎨 Websites
+
+Both websites use **Next.js 14 + Framer Motion + TinaCMS** for:
+- Apple-style scroll animations
+- Smooth page transitions
+- CMS-managed content
+- Optimized performance
+
+See individual website READMEs for details.
 
 ---
 
-## License
+## 📚 Documentation
 
-- **vyke-analyse**: MIT License (see libraries/vyke-analyse/LICENSE)
-- **vyke-produce**: Proprietary (see libraries/vyke-produce/LICENSE)
-- **vyke-play**: Proprietary (see libraries/vyke-play/LICENSE)
+- [vyke.ai/README.md](./vyke.ai/README.md) - AI Tool documentation
+- [ROADMAP.md](./ROADMAP.md) - Cross-project roadmap
+- [ARCHITECTURE.md](./ARCHITECTURE.md) - System architecture
 
 ---
 
-**Built for producers who want MIDI, not loops.** 🎹
+**© 2026 Luke Vyke - All Rights Reserved**
