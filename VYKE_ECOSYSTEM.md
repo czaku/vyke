@@ -219,3 +219,36 @@ git add vyke-analyse && git commit -m "chore: update analyse submodule"
 ---
 
 **© 2026 Luke Vyke - All Rights Reserved**
+
+---
+
+## 📁 Repository Strategy
+
+### Super-Repo Approach (Selected)
+
+All code lives in **one private repository** (`~/dev/vyke/`):
+
+| Component | Location | Repo | Notes |
+|-----------|----------|------|-------|
+| vyke.ai app | `/vyke.ai/` | **Same repo** | Separate git history via gitignore |
+| vyke-analyse | `/vyke-analyse/` | **Submodule** | Linked to czaku/vyke-analyse |
+| vyke-produce | `/vyke-produce/` | **Submodule** | Linked to czaku/vyke-produce |
+| vyke-play | `/vyke-play/` | **Submodule** | Linked to czaku/vyke-play |
+| web/vyke.ai | `/web/vyke.ai/` | **Same repo** | Marketing site |
+| web/vyke.dj | `/web/vyke.dj/` | **Same repo** | Portfolio site |
+
+**Why this approach:**
+- ✅ **Single source of truth** for all code
+- ✅ **Atomic commits** can span app + websites + docs
+- ✅ **Simpler CI/CD** - one pipeline for everything
+- ✅ **Marketing sites don't need separate versioning** - they're content, not libraries
+- ✅ **Easier to keep in sync** - no submodule hell for websites
+
+### Deployment
+
+Websites deploy independently via Vercel:
+- `vyke.ai` → `web/vyke.ai/` folder
+- `vyke.dj` → `web/vyke.dj/` folder
+
+Both use TinaCMS for content management, so content updates don't require code changes.
+

@@ -26,7 +26,7 @@
 ├── 📁 libs/                 ← Shared dependencies
 │   └── Vendored libraries (essentia, allin1, etc.)
 │
-├── 📁 web/                  ← Public websites
+├── 📁 web/                  ← Public websites (same repo)
 │   ├── vyke.ai/             ← Product landing page
 │   └── vyke.dj/             ← Personal DJ portfolio
 │
@@ -111,3 +111,28 @@ See individual website READMEs for details.
 ---
 
 **© 2026 Luke Vyke - All Rights Reserved**
+
+---
+
+## 📦 Repository Strategy: Super-Repo
+
+**Everything is in this one repository.**
+
+### Why One Repo?
+
+| Component | Why Here? |
+|-----------|-----------|
+| **vyke.ai app** | Core product, evolves with libraries |
+| **Websites** | Marketing content, rarely changes |
+| **Libraries** | Git submodules for clean separation |
+
+### Deployment
+
+| Domain | Source | Platform |
+|--------|--------|----------|
+| vyke.ai | `web/vyke.ai/` | Vercel |
+| vyke.dj | `web/vyke.dj/` | Vercel |
+| app.vyke.ai | `vyke.ai/` backend | Fly.io/Railway |
+
+**Content updates** via TinaCMS don't require code deploys.
+
