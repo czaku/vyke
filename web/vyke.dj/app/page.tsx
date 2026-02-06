@@ -1,18 +1,17 @@
 'use client'
 
-import { SmoothScrollProvider } from './components/smooth-scroll-provider'
-import { CustomCursor } from './components/custom-cursor'
-import { Navigation } from './components/navigation'
-import { HeroSection } from './components/hero-section'
-import { FeaturedMixes } from './components/featured-mixes'
-import { AboutSection } from './components/about-section'
-import { TourDates } from './components/tour-dates'
-import { NewsletterSection } from './components/newsletter-section'
-import { Footer } from './components/footer'
+import { CustomCursor } from '@/components/custom-cursor'
+import { Navigation } from '@/components/navigation'
+import { HeroSection } from '@/components/hero-section'
+import { FeaturedMixes } from '@/components/featured-mixes'
+import { AboutSection } from '@/components/about-section'
+import { TourDates } from '@/components/tour-dates'
+import { NewsletterSection } from '@/components/newsletter-section'
+import { Footer } from '@/components/footer'
 
 export default function Home() {
   return (
-    <SmoothScrollProvider>
+    <>
       <CustomCursor />
       <Navigation />
       
@@ -42,6 +41,6 @@ export default function Home() {
       </main>
       
       <Footer />
-    </SmoothScrollProvider>
+    </>
   )
 }

@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
-import { SmoothScrollProvider } from '@/components/smooth-scroll-provider'
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -26,10 +25,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={inter.variable}>
-      <body className="bg-black text-white antialiased overflow-x-hidden">
-        <SmoothScrollProvider>
-          {children}
-        </SmoothScrollProvider>
+      <body className="bg-[#050505] text-white antialiased overflow-x-hidden">
+        {children}
       </body>
     </html>
   )
