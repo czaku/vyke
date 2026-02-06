@@ -10,14 +10,14 @@ export function CustomCursor() {
   const cursorX = useMotionValue(-100)
   const cursorY = useMotionValue(-100)
   
-  const springConfig = { damping: 25, stiffness: 400 }
+  const springConfig = { damping: 25, stiffness: 700 }
   const cursorXSpring = useSpring(cursorX, springConfig)
   const cursorYSpring = useSpring(cursorY, springConfig)
 
   useEffect(() => {
     // Only show custom cursor on desktop
-    const isTouchDevice = window.matchMedia('(pointer: coarse)').matches
-    if (isTouchDevice) return
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+    if (isMobile) return
 
     setIsVisible(true)
 
@@ -28,13 +28,7 @@ export function CustomCursor() {
 
     const handleMouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement
-      if (
-        target.tagName === 'A' ||
-        target.tagName === 'BUTTON' ||
-        target.closest('a') ||
-        target.closest('button') ||
-        target.classList.contains('cursor-pointer')
-      ) {
+      if (target.tagName === 'A' || target.tagName === 'BUTTON' || target.closest('a') || target.closest('button')) {
         setIsHovering(true)
       }
     }
@@ -58,25 +52,22 @@ export function CustomCursor() {
 
   return (
     <>
-      {/* Main cursor */}
       <motion.div
-        className="fixed top-0 left-0 w-4 h-4 bg-white rounded-full pointer-events-none z-[9999] mix-blend-difference"
+        className="custom-cursor"
         style={{
           x: cursorXSpring,
           y: cursorYSpring,
-          translateX: '-50%',
-          translateY: '-50%',
         }}
         animate={{
-          scale: isHovering ? 2 : 1,
-          opacity: isHovering ? 0.5 : 1,
+          width: isHovering ? 60 : 20,
+          height: isHovering ? 60 : 20,
+          backgroundColor: isHovering ? 'rgba(224, 86, 200, 0.1)' : 'transparent',
         }}
         transition={{ duration: 0.2 }}
       />
-      
-      {/* Cursor follower */}
+      {/* Inner dot */}
       <motion.div
-        className="fixed top-0 left-0 w-8 h-8 border border-white/50 rounded-full pointer-events-none z-[9998] mix-blend-difference"
+        className="fixed top-0 left-0 w-1.5 h-1.5 rounded-full bg-[#e056c8] pointer-events-none z-[10001]"
         style={{
           x: cursorXSpring,
           y: cursorYSpring,
@@ -84,9 +75,8 @@ export function CustomCursor() {
           translateY: '-50%',
         }}
         animate={{
-          scale: isHovering ? 1.5 : 1,
+          scale: isHovering ? 0 : 1,
         }}
-        transition={{ duration: 0.3 }}
       />
     </>
   )
