@@ -1,0 +1,175 @@
+# DJLAB Cursor Rules
+
+## Primary Directive
+
+Always follow the personality, voice, and behavior rules defined in `AGENT.md` (at project root).
+
+See `AGENT.md` for complete personality, voice, and behavior guidelines.
+
+When writing ANY user-facing copy, responses, or messages in this codebase:
+1. Read and internalize the rules in AGENT.md
+2. Be fun, approachable, and a bit cheeky
+3. Never be robotic or corporate
+4. Think like a producer, not just a tool
+
+## Code Style
+
+### Python (Backend)
+- Use type hints everywhere
+- Docstrings for all public functions
+- Keep functions focused and small
+- Use dataclasses for structured data
+- Prefer composition over inheritance
+
+### Swift (macOS App)
+- Follow Apple's Swift style guide
+- Use SwiftUI idioms
+- Keep views small and composable
+- Use @Observable for state management
+
+### TypeScript (Frontend)
+- Use TypeScript strictly (no `any`)
+- Functional components with hooks
+- Tailwind for styling
+- Keep components under 200 lines
+
+## Domain Knowledge
+
+This is a music production AI assistant. Key domains:
+- Electronic music genres (techno, house, circuit, dnb, etc.)
+- DAW project generation (Ableton, FL Studio)
+- Music theory (BPM, key, arrangement)
+- DJ culture and artist references
+
+When adding features:
+- Consider the musical implications
+- Think like a producer would
+- Add complementary changes (not just what was asked)
+- Respect genre conventions
+
+## AI Responses
+
+When writing AI response text:
+- Reference `/AGENT.md` for tone
+- Use casual, friendly language
+- Include relevant emoji (sparingly)
+- Acknowledge artist references with enthusiasm
+- Suggest next steps proactively
+
+## Testing
+
+- Test edge cases in music logic
+- Ensure genre characteristics are accurate
+- Verify artist style mappings
+- Check that generation parameters translate correctly
+
+## Documentation
+
+- Keep AGENT.md updated with new personality rules
+- Document artist additions with style details
+- Explain the "why" not just the "what"
+
+## Ableton Generation Capabilities Roadmap
+
+**CRITICAL RULE:** The `ABLETON_GENERATION_CAPABILITIES_ROADMAP.md` document MUST be kept up-to-date.
+
+### Core Workflow (MUST FOLLOW)
+
+**Goal:** Learn how to create Ableton `.als` files FROM SCRATCH, from super basic to super complex levels.
+
+**Process:**
+
+1. **Learning Phase:**
+   - Analyze real Ableton projects in `~/Desktop/ableton_projects/` to understand structure
+   - Analyze crash reports from Ableton Live 12 to identify issues
+   - Document learnings in roadmap
+
+2. **Generation Phase:**
+   - Generate versioned test projects in `~/Desktop/djlab_ableton_generation_test/`
+   - Each project MUST be versioned: `Test_[LEVEL]_[NAME]_v[VERSION]_[TIMESTAMP]`
+   - Projects MUST be created FROM SCRATCH (`from_scratch=True`) - NEVER copy/modify existing projects
+   - Use `create_project_dynamic()` with `from_scratch=True` parameter
+
+3. **Testing Phase:**
+   - User launches projects in Ableton Live 12
+   - Test incrementally: Level 0 → Level 1 → Level 2, etc.
+   - Stop at first failure
+
+4. **Success Path:**
+   - ✅ Project opens without crashes and functions correctly
+   - ✅ **BUILD THE APP:** Run build/test to ensure djlab builds successfully
+   - ✅ **FIX BUILD ISSUES:** If build fails, fix issues
+   - ✅ **RE-GENERATE:** Generate project again to prove fix didn't break generation
+   - ✅ **VERIFY BOTH:** Both build AND generation must work for successful version
+   - ✅ Update roadmap: Mark as ✅ Complete
+   - ✅ Commit code: `"Level X: [description] - Test v[version]"`
+   - ✅ Add to roadmap: commit hash (`git rev-parse HEAD`), timestamp (YYYY-MM-DD HH:MM:SS), test version number
+   - ✅ Keep project in `djlab_ableton_generation_test/` for reference
+
+5. **Failure Path:**
+   - ❌ Project crashes or shows errors
+   - ❌ **IMMEDIATELY CHECK FOR CRASH REPORTS:** Look in `~/Library/Logs/DiagnosticReports/` for recent `Ableton Live*.ips` files (last 10 minutes)
+   - ❌ **INFORM USER:** Always report if crash report found or not found
+   - ❌ Move project folder to `djlab_ableton_generation_test/@archive/`
+   - ❌ Analyze crash report (if available) - extract error type, exception type, stack traces
+   - ❌ Fix issue in code based on crash report findings
+   - ❌ Generate new versioned project
+   - ❌ Repeat testing
+
+6. **Completion Criteria:**
+   - ✅ Once we can generate the MOST COMPLEX Ableton project from scratch
+   - ✅ THEN we work on editing existing projects
+   - ✅ THEN we work on syncing with `.djlabp` format
+
+**Critical Rules:**
+- NEVER copy/modify existing projects - always create FROM SCRATCH
+- ALWAYS version projects before testing (increment version on each attempt)
+- ALWAYS archive failed tests (move to `@archive/`, don't delete)
+- **ALWAYS BUILD APP BEFORE COMMITTING:** Run build/test, fix build issues, re-generate to verify generation still works
+- **SUCCESSFUL VERSION REQUIRES:** Both djlab build working AND generation working
+- ALWAYS commit working code with test version number in commit message
+- ALWAYS update roadmap with commit hash when marking complete
+- Test incrementally - don't skip levels
+- Once highest complexity achieved, THEN work on editing
+- Once editing works, THEN work on `.djlabp` sync
+- **V2 IS FRESH START:** Use `ableton_export_service_v2.py` only, ignore V1, start learning from Level 0
+
+**When completing a capability:**
+1. Mark it as ✅ Complete
+2. Add completion date (YYYY-MM-DD)
+3. Add GitHub commit hash where it was verified working: `git rev-parse HEAD`
+4. Add test version number that worked
+5. Update "Last Updated" timestamp at top of document
+6. Add any relevant notes about implementation
+
+**When analyzing real Ableton projects:**
+- Always check `~/Desktop/ableton_projects/` for structure examples
+- Use existing analysis scripts (`learn_ableton_structure.py`, `analyze_deep_ableton.py`)
+- Document new capabilities found in real projects
+- Update roadmap with discovered capabilities
+
+**When implementing new capabilities:**
+- Test incrementally (one level at a time)
+- Compare generated projects with real ones
+- Match crashes to specific capabilities
+- Update roadmap before marking complete
+
+**ABLETON_GENERATION_FINDINGS.md Rule:**
+- This document is the "bible" of Ableton structure learnings
+- MUST be updated whenever we discover, prove, or disprove something
+- Version each change (increment version number)
+- Use checkboxes: [x] verified, [ ] unverified, mark with ❌ if disproven
+- Add findings immediately when discovered
+- Update findings when proven/disproven through testing
+- Document crash causes and error messages
+- Keep findings continuously in sync with actual discoveries
+
+**CRASH REPORT CHECKING RULE:**
+- **MANDATORY:** Whenever user reports a crash, IMMEDIATELY check for crash reports
+- Check location: `~/Library/Logs/DiagnosticReports/` for `Live-*.ips` files (Ableton crash reports are named "Live-*.ips", not "Ableton Live*.ips")
+- Check time window: Last 10 minutes from current time, OR check for crashes after project generation time
+- **ALWAYS INFORM USER:** Report "✅ Found X crash report(s)" or "❌ No crash reports found"
+- Extract key info: Exception type, error type (EXC_BAD_ACCESS, EXC_CRASH, Data Abort, etc.), exception codes
+- Use crash report findings to guide fixes
+- Document crash causes in ABLETON_GENERATION_FINDINGS.md
+
